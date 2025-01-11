@@ -170,8 +170,15 @@ CALL GETOPTION ("--file-out"  , CLFILEFO, MND=.TRUE.)
 CALL GETOPTION ("--verbose", LLVERBOSE)
 CALL GETOPTION ("--diff", LLDIFF)
 
-ISIZE4 = 10; CALL GETOPTION ("--stack-size-4", ISIZE4)
-ISIZE8 = 80; CALL GETOPTION ("--stack-size-8", ISIZE8)
+#ifdef PARKIND1_SINGLE
+ISIZE4 = 80; 
+ISIZE8 = 10; 
+#else
+ISIZE4 = 10; 
+ISIZE8 = 80; 
+#endif
+CALL GETOPTION ("--stack-size-4", ISIZE4)
+CALL GETOPTION ("--stack-size-8", ISIZE8)
 NTIME = 1; CALL GETOPTION ("--times", NTIME)
 
 CLMETHOD = 'openmp'; CALL GETOPTION ("--method", CLMETHOD)
