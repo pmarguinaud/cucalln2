@@ -15,6 +15,8 @@ use Bt;
 use PATH;
 use Compare;
 use OpenACC;
+use Identifier;
+use Print;
 
 
 my %opts;
@@ -103,7 +105,7 @@ sub preProcessIfNewer
 
   my @inlined = @{ $args{inlined} || [] };
 
-  my $SUFFIX = '_SINGLE_COLUMN';
+  my $SUFFIX = '_OPENACC';
   my $suffix = lc ($SUFFIX);
 
   $f2 =~ s/\.F90$/$suffix.F90/;
@@ -116,15 +118,19 @@ sub preProcessIfNewer
      
       &Canonic::makeCanonic ($d);
 
+      my ($pu) = &F ('./object/file/program-unit', $d);
+
       for my $in (@inlined)
         {
           my $di = &Fxtran::parse (location => $in, fopts => [qw (-construct-tag -line-length 512 -canonic -no-include)]);
           &Canonic::makeCanonic ($di);
-          &Inline::inlineExternalSubroutine ($d, $di);
+          &Inline::inlineExternalSubroutine ($pu, $di);
         }
 
+      &Identifier::rename ($d, JL => 'JLON', JK => 'JLEV');
+
       &Call::addSuffix ($d, suffix => $SUFFIX, match => sub { $_[0] !~ m/^(?:DR_HOOK|ABOR1)$/o });
-      &Subroutine::addSuffix ($d, $SUFFIX);
+      &Subroutine::addSuffix ($pu, $SUFFIX);
 
       &saveToFile ($d, "tmp/$f2");
 
@@ -148,10 +154,12 @@ sub preProcessIfNewer
       &ReDim::reDim ($d);
       &saveToFile ($d, "tmp/reDim/$f2");
 
-      &OpenACC::routineSeq ($d);
+      &OpenACC::routineSeq ($pu);
 
-      &Stack::addStack ($d);
+      &Stack::addStack ($d, stack84 => 1);
       &saveToFile ($d, "tmp/addStack/$f2");
+
+      &Print::useABOR1_ACC ($d);
 
       &DrHook::remove ($d);
       &saveToFile ($d, "tmp/removeDrHook/$f2");
@@ -159,7 +167,9 @@ sub preProcessIfNewer
       &saveToFile ($d, $f2);
 
       &Fxtran::intfb ($f2);
+
     }
+
 }
 
 my @opts_f = qw (update compile compare compare-prompt inline);
