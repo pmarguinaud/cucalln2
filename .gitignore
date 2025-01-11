@@ -1,0 +1,11 @@
+*.F90.xml
+*.o
+*.a
+*.x
+*.mod
+*.optrpt
+*.ok
+compile.*
+slurm-*.out
+*.db
+cucalln*.dat
