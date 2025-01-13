@@ -79,7 +79,7 @@ sub removeSPP
 
   use Construct;
 
-  &Construct::apply ($d, '//named-E[string(.)="YSPP_CONFIG%LSPP"]', &e ('.FALSE.'));
+  &Construct::apply ($d, '//named-E[string(.)="YDSPP_CONFIG%LSPP"]', &e ('.FALSE.'));
 
 }
 
