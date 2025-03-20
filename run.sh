@@ -14,9 +14,10 @@ export OMP_NUM_THREADS=8
 
 cd $SLURM_SUBMIT_DIR
 
+# --ngpblks 3 --verbose --diff --case-out . 
+
 ./compile.gpu_nvhpc_d/main_cucalln_mf.x \
-  --case-out . \
-  --ngpblks 3 \
   --case-in /scratch/work/marguina/tmp/arp.18277215/nominal/000001 \
-  --verbose --diff --method openmp
+  --ngpblks 9000 --times 10 \
+  --method openaccsinglecolumn
 
