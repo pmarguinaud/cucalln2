@@ -14,9 +14,23 @@ export OMP_NUM_THREADS=8
 
 cd $SLURM_SUBMIT_DIR
 
-./compile.gpu_nvhpc_d/main_cucalln_mf.x \
-  --case-out . \
-  --ngpblks 3 \
+./compile.cpu_intel_d/main_cucalln_mf.x \
+  --ngpblks 6000 \
   --case-in /scratch/work/marguina/tmp/arp.18277215/nominal/000001 \
-  --verbose --diff --method openmp
+  --verbose --stat --method openmp
+
+./compile.cpu_intel_s/main_cucalln_mf.x \
+  --ngpblks 6000 \
+  --case-in /scratch/work/marguina/tmp/arp.18277215/nominal/000001 \
+  --verbose --stat --method openmp
+
+./compile.gpu_nvhpc_d/main_cucalln_mf.x \
+  --ngpblks 6000 \
+  --case-in /scratch/work/marguina/tmp/arp.18277215/nominal/000001 \
+  --verbose --stat --method openaccsinglecolumn
+
+./compile.gpu_nvhpc_s/main_cucalln_mf.x \
+  --ngpblks 6000 \
+  --case-in /scratch/work/marguina/tmp/arp.18277215/nominal/000001 \
+  --verbose --stat --method openaccsinglecolumn
 
