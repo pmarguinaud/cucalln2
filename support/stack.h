@@ -20,9 +20,9 @@ USE PARKIND1, ONLY : JPRB
 
 #define nullptr(p) IP_##p##_ = 0
 
-#define alloc4(n) IP_##n##_=YLSTACK%L4;YLSTACK%L4=YLSTACK%L4+4*SIZE(n);IF(YLSTACK%L4>YLSTACK%U4)CALL ABOR1_ACC(__FILE__)
+#define alloc4(n) IP_##n##_=YLSTACK_L4;YLSTACK_L4=YLSTACK_L4+4*SIZE(n);
 
-#define alloc8(n) IP_##n##_=YLSTACK%L8;YLSTACK%L8=YLSTACK%L8+8*SIZE(n);IF(YLSTACK%L8>YLSTACK%U8)CALL ABOR1_ACC(__FILE__)
+#define alloc8(n) IP_##n##_=YLSTACK_L8;YLSTACK_L8=YLSTACK_L8+8*SIZE(n);
 
 #define malign(p,k) ((((p)+(k)-1)/(k)) * (k))
 
