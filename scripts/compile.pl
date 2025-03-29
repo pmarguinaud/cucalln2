@@ -151,7 +151,7 @@ sub preProcessIfNewer
       &Loop::removeJlonLoops ($d);
       &saveToFile ($d, "tmp/removeJlonLoops/$f2");
 
-      &ReDim::reDim ($d);
+      &ReDim::reDim ($d, 'redim-arguments' => 1);
       &saveToFile ($d, "tmp/reDim/$f2");
 
       &OpenACC::routineSeq ($pu);
