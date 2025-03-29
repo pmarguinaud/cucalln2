@@ -53,6 +53,25 @@ sub saveToFile
   'FileHandle'->new (">$f.xml")->print ($x->toString ());
 }
 
+sub addValueAttribute
+{
+  my $d = shift;
+
+  my @intent = &F ('.//T-decl-stmt'    
+                 . '[_T-spec_/intrinsic-T-spec[string(T-N)="REAL" or string(T-N)="INTEGER" or string(T-N)="LOGICAL"]]' # Only REAL/IN
+                 . '[not(.//array-spec)]'                                                                              # Without dime
+                 . '//attribute[string(intent-spec)="IN"]'                                                             # Only argumen
+                 , $d); 
+
+  for my $intent (@intent)
+    {   
+      for my $x (&t (' '), &n ('<attribute><attribute-N>VALUE</attribute-N></attribute>'), &t (', '))
+        {
+          $intent->parentNode->insertAfter ($x, $intent);
+        }
+    }   
+
+}
 
 sub replaceJLByJLON
 {
@@ -153,6 +172,8 @@ sub preProcessIfNewer
 
       &ReDim::reDim ($d, 'redim-arguments' => 1);
       &saveToFile ($d, "tmp/reDim/$f2");
+
+      &addValueAttribute ($d);
 
       &OpenACC::routineSeq ($pu);
 
