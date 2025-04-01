@@ -176,6 +176,8 @@ ASSOCIATE(RMFSOLTQ=>YDECUMF%RMFSOLTQ, RMFSOLRHS=>YDECUMF%RMFSOLRHS, &
  & LEPCLD2=>YDPHNC%LEPCLD2, RMFADVWDD=>YDECUMF%RMFADVWDD, &
  & LMFENTHCONS=>YDECUMF%LMFENTHCONS)
 
+IF (JL == 19) PRINT *, " CUDTDQN ", PTENT (JL,60)
+
 !*    1.0          SETUP AND INITIALIZATIONS
 !                  -------------------------
 
@@ -196,9 +198,12 @@ ENDDO
 !         MASS-FLUX APPROACH SWITCHED ON FOR DEEP CONVECTION ONLY
 !         IN THE TANGENT-LINEAR AND ADJOINT VERSIONS
 
+IF (JL == 19) PRINT *, " LDCUM = ", LDCUM(JL)
+IF (JL == 19) PRINT *, " KTYPE = ", KTYPE(JL)
 DO JL=KIDIA,KFDIA
   IF (KTYPE(JL) /= 1.AND.LPHYLIN) LDCUM(JL)=.FALSE.
 ENDDO
+IF (JL == 19) PRINT *, " LDCUM = ", LDCUM(JL)
 
 ! zero detrained liquid water if diagnostic cloud scheme to be used
 
@@ -366,6 +371,8 @@ IF ( RMFSOLTQ==0.0_JPRB ) THEN
 
 !*    3.1          UPDATE TENDENCIES
 !                  -----------------
+IF (JL == 19) PRINT *, " CUDTDQN PTENT ", PTENT (JL,60)
+IF (JL == 19) PRINT *, " CUDTDQN ZDTDT ", ZDTDT (JL,60)
 
     DO JK=KTOPM2,KLEV
       DO JL=KIDIA,KFDIA
@@ -376,6 +383,7 @@ IF ( RMFSOLTQ==0.0_JPRB ) THEN
         ENDIF
       ENDDO
     ENDDO
+IF (JL == 19) PRINT *, " CUDTDQN ", PTENT (JL,60)
 
 ELSE
 !----------------------------------------------------------------------
@@ -391,6 +399,10 @@ ELSE
       LLCUMBAS(:,:)=.FALSE.
       ZB(:,:)=1.0_JPRB
       ZMFUS(:,:)=0.0_JPRB
+
+IF (JL == 19) PRINT *, " LLCUMBAS = ", LLCUMBAS(JL,60)
+IF (JL == 19) PRINT *, " LDCUM = ", LDCUM(JL)
+IF (JL == 19) PRINT *, " KCTOP = ", KCTOP(JL)
 
      ! Fill vectors A, B and RHS
 
@@ -420,6 +432,7 @@ ELSE
            ENDIF
          ENDDO
       ENDDO
+IF (JL == 19) PRINT *, " LLCUMBAS = ", LLCUMBAS(JL,60)
 
       CALL CUBIDIAG&
          &( KIDIA,    KFDIA,   KLON,   KLEV, &
@@ -433,12 +446,24 @@ ELSE
 
      ! Compute tendencies
 
+IF (JL == 19) PRINT *, " LDTDKMF = ", LDTDKMF
+IF (JL == 19) PRINT *, " LLCUMBAS = ", LLCUMBAS(JL,60)
+
       DO JK=KTOPM2,KLEV
          DO JL=KIDIA,KFDIA
+IF (JK == 60) THEN
+IF (JL == 19) PRINT *, " LLCUMBAS = ", LLCUMBAS(JL,JK)
+ENDIF
            IF(LLCUMBAS(JL,JK)) THEN
              IF (LDTDKMF) THEN
                PTENT(JL,JK)=PTENT(JL,JK)+(ZR1(JL,JK)-PTEN(JL,JK))*ZTSPHY
                PTENQ(JL,JK)=PTENQ(JL,JK)+(ZR2(JL,JK)-PQEN(JL,JK))*ZTSPHY
+IF (JK == 60) THEN
+IF (JL == 19) PRINT *, " CUDTDQN ZR1 ", ZR1 (JL,60)
+IF (JL == 19) PRINT *, " CUDTDQN ZR2 ", ZR2 (JL,60)
+IF (JL == 19) PRINT *, " CUDTDQN PTEN ", PTEN (JL,60)
+IF (JL == 19) PRINT *, " CUDTDQN LDTDKMF=T ", PTENT (JL,60)
+ENDIF
              ELSE
                PTENT(JL,JK)=PTENT(JL,JK)*(1.0_JPRB-RMFSOLRHS)+(ZR1(JL,JK)-PTEN(JL,JK))*ZTSPHY
                PTENQ(JL,JK)=PTENQ(JL,JK)*(1.0_JPRB-RMFSOLRHS)+(ZR2(JL,JK)-PQEN(JL,JK))*ZTSPHY
@@ -447,10 +472,12 @@ ELSE
            ENDIF
          ENDDO
       ENDDO
+IF (JL == 19) PRINT *, " CUDTDQN ", PTENT (JL,60)
 
 !----------------------------------------------------------------------
 ENDIF
 
+IF (JL == 19) PRINT *, " CUDTDQN ", PTENT (JL,60)
 END ASSOCIATE
 IF (LHOOK) CALL DR_HOOK('CUDTDQN',1,ZHOOK_HANDLE)
 END SUBROUTINE CUDTDQN

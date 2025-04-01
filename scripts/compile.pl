@@ -3,7 +3,7 @@
 use strict;
 use local::lib;
 use FindBin qw ($Bin);
-use lib '/home/gmap/mrpm/marguina/fxtran-acdc/lib';
+use lib "$Bin/../fxtran-acdc/lib";
 use FileHandle;
 use File::Copy;
 use File::Basename;
@@ -17,6 +17,7 @@ use Compare;
 use OpenACC;
 use Identifier;
 use Print;
+use Fxtran;
 
 
 my %opts;
@@ -51,6 +52,64 @@ sub saveToFile
 
   'FileHandle'->new (">$f")->print (&Canonic::indent ($x));
   'FileHandle'->new (">$f.xml")->print ($x->toString ());
+}
+
+sub dropKLONDimension
+{
+  my $d = shift;
+
+  &Decl::use ($d, &s ("USE ABOR1_ACC_MOD"));
+
+  my @args = qw (PLCRIT_AER PTM1 PQM1 PUM1 PVM1 PCM1 PLITOT PVERVEL PQHFL PAHFS PAPHM1 PAP PAPH PGEO PGEOH PTENT 
+                 PTENQ PTENU PTENV PTENTA PTENQA PTENC PLU PLUDE PLUDELI PSNDE PMFU PMFD PLGLAC PDIFCQ PDIFCS PFHPCL 
+                 PFHPCN PFPLCL PFPLCN PLRAIN PRSUD PSTRCU PSTRCV PFCQLF PFCQIF PMFUDE_RATE PMFDDE_RATE PWU PDISS);
+
+  my %args = map { ($_, 1) } @args;
+
+  my @en_decl = &F ('.//EN-decl', $d);
+
+  my @N;
+
+  for my $en_decl (@en_decl)
+    {
+      next unless (my ($as) = &F ('./array-spec', $en_decl));
+      my ($N) = &F ('./EN-N', $en_decl, 1);
+
+      next if ($args{$N});
+
+      my @ss = &F ('./shape-spec-LT/shape-spec', $as);
+      if ($ss[0]->textContent eq 'KLON')
+        {
+          if ($ss[0]->nextSibling)
+            {
+              $_->unbindNode () for ($ss[0]->nextSibling, $ss[0]);
+            }
+          else
+            {
+              $as->unbindNode ();
+            }
+          push @N, $N;
+        }
+    }
+
+  for my $N (@N)
+    {
+      my @expr = &F ('.//named-E[string(N)="?"]', $N, $d);
+      for my $expr (@expr)
+        {
+          next unless (my ($ss) = &F ('./R-LT/array-R/section-subscript-LT/section-subscript', $expr));
+          if ($ss->nextSibling)
+            {
+              $_->unbindNode () for ($ss->nextSibling, $ss);
+            }
+          else
+            {
+              my ($RLT) = &F ('./R-LT', $expr);
+              $RLT->unbindNode ();
+            }
+        }
+    }
+
 }
 
 sub addValueAttribute
@@ -173,7 +232,7 @@ sub preProcessIfNewer
       &ReDim::reDim ($d, 'redim-arguments' => 1);
       &saveToFile ($d, "tmp/reDim/$f2");
 
-      &addValueAttribute ($d);
+      &dropKLONDimension ($d);
 
       &OpenACC::routineSeq ($pu);
 

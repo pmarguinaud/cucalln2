@@ -136,7 +136,7 @@ REAL(KIND=JPRB)                   , POINTER  :: PDISS(:,:,:)
 #include "cucalln_mf.intfb.h"
 #include "cucalln_mf_openacc.intfb.h"
 
-INTEGER :: JLON, JBLK
+INTEGER :: JLON, JBLK, JLEV
 INTEGER :: ILUNCI, ILUNFI, ILUNFO, IOUT
 INTEGER :: NPROMA, NGPBLKS
 CHARACTER (LEN=128) :: CLOUT
@@ -377,6 +377,8 @@ ENDDO
 
 CALL GET_TIME (TEC)
 
+
+
 IF (TRIM (CLMETHOD) == 'openaccsinglecolumn') THEN
   CALL WIPE (YDPERTPAR)
   CALL WIPE (YDSPP_CONFIG)
@@ -390,6 +392,8 @@ IF (TRIM (CLMETHOD) == 'openaccsinglecolumn') THEN
 ENDIF
 
 !$ACC END DATA
+
+WRITE (0, *) __FILE__, ':', __LINE__, " PTENT ", PTENT (19,60,1)
 
 CALL GET_TIME (TED)
 

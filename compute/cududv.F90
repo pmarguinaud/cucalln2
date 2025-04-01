@@ -1,8 +1,8 @@
 SUBROUTINE CUDUDV &
  & (YDCST,   YDECUMF,  YDSPP_CONFIG,       YDPERTPAR,KIDIA,    KFDIA,    KLON,     KLEV, &
  & KTOPM2,   KTYPE,    KCBOT,    KCTOP,    LDCUM,    PTSPHY,&
- & PAPH,     PAP,      PUEN,     PVEN,     PMFU,     PMFD,&
- & PMFUO,    PMFDO,    PUU,      PUD,      PVU,      PVD,  PGP2DSPP,&
+ & PAPH,     PAP,      PUEN,     PVEN,     PMFUUS,   PMFDUS,&
+ & PMFU,     PMFD,     PUU,      PUD,      PVU,      PVD,  PGP2DSPP,&
  & PTENU,    PTENV  )  
 
 !**** *CUDUDV* - UPDATES U AND V TENDENCIES,
@@ -39,8 +39,8 @@ SUBROUTINE CUDUDV &
 !    *PAP *         PROVISIONAL PRESSURE ON FULL LEVELS            PA
 !    *PUEN*         PROVISIONAL ENVIRONMENT U-VELOCITY (T+1)       M/S
 !    *PVEN*         PROVISIONAL ENVIRONMENT V-VELOCITY (T+1)       M/S
-!    *PMFU*         MASSFLUX UPDRAFTS                             KG/(M2*S)
-!    *PMFD*         MASSFLUX DOWNDRAFTS                           KG/(M2*S)
+!    *PMFUUS*       MASSFLUX UPDRAFTS                             KG/(M2*S)
+!    *PMFDUS*       MASSFLUX DOWNDRAFTS                           KG/(M2*S)
 !    *PUU*          U-VELOCITY IN UPDRAFTS                         M/S
 !    *PUD*          U-VELOCITY IN DOWNDRAFTS                       M/S
 !    *PVU*          V-VELOCITY IN UPDRAFTS                         M/S
@@ -111,10 +111,10 @@ REAL(KIND=JPRB)    ,INTENT(IN)     :: PAPH(KLON,KLEV+1)
 REAL(KIND=JPRB)    ,INTENT(IN)     :: PAP(KLON,KLEV) 
 REAL(KIND=JPRB)    ,INTENT(IN)     :: PUEN(KLON,KLEV) 
 REAL(KIND=JPRB)    ,INTENT(IN)     :: PVEN(KLON,KLEV) 
+REAL(KIND=JPRB)    ,INTENT(IN)     :: PMFUUS(KLON,KLEV) 
+REAL(KIND=JPRB)    ,INTENT(IN)     :: PMFDUS(KLON,KLEV) 
 REAL(KIND=JPRB)    ,INTENT(IN)     :: PMFU(KLON,KLEV) 
 REAL(KIND=JPRB)    ,INTENT(IN)     :: PMFD(KLON,KLEV) 
-REAL(KIND=JPRB)    ,INTENT(IN)     :: PMFUO(KLON,KLEV) 
-REAL(KIND=JPRB)    ,INTENT(IN)     :: PMFDO(KLON,KLEV) 
 REAL(KIND=JPRB)    ,INTENT(IN)     :: PUU(KLON,KLEV) 
 REAL(KIND=JPRB)    ,INTENT(IN)     :: PUD(KLON,KLEV) 
 REAL(KIND=JPRB)    ,INTENT(IN)     :: PVU(KLON,KLEV) 
@@ -155,6 +155,10 @@ LLPPAR_CUDUV   = .FALSE.
 LLPERT_CUDUDV  = .FALSE.
 LLPERT_CUDUDVS = .FALSE.
 
+IF (JL == 19) PRINT *, " CUMASTRN PMFUUS = ", PMFUUS(JL,60)
+
+IF (JL == 19) PRINT *, " CUDUDV PTENU (1) = ", PTENU(JL,60)
+
 DO JL=KIDIA,KFDIA
   ZADVW(JL)=0.0_JPRB
   IF(KTYPE(JL)==1) ZADVW(JL)=RMFADVW
@@ -179,13 +183,20 @@ ENDDO
     IK=JK-1
     DO JL=KIDIA,KFDIA
       IF(LDCUM(JL)) THEN
-        ZMFUU(JL,JK)=PMFU(JL,JK)*(PUU(JL,JK)-ZIMP*PUEN(JL,IK))
-        ZMFUV(JL,JK)=PMFU(JL,JK)*(PVU(JL,JK)-ZIMP*PVEN(JL,IK))
-        ZMFDU(JL,JK)=PMFD(JL,JK)*(PUD(JL,JK)-ZIMP*PUEN(JL,IK))
-        ZMFDV(JL,JK)=PMFD(JL,JK)*(PVD(JL,JK)-ZIMP*PVEN(JL,IK))
+        ZMFUU(JL,JK)=PMFUUS(JL,JK)*(PUU(JL,JK)-ZIMP*PUEN(JL,IK))
+        ZMFUV(JL,JK)=PMFUUS(JL,JK)*(PVU(JL,JK)-ZIMP*PVEN(JL,IK))
+IF (JL == 19 .AND. JK == 60) THEN
+  PRINT *, " CUDUDV PMFUUS = ", PMFUUS(JL,JK)
+  PRINT *, " CUDUDV PVU = ", PVU(JL,JK)
+  PRINT *, " CUDUDV PVEN = ", PVEN(JL,IK)
+  PRINT *, " CUDUDV ZIMP = ", ZIMP
+ENDIF
+        ZMFDU(JL,JK)=PMFDUS(JL,JK)*(PUD(JL,JK)-ZIMP*PUEN(JL,IK))
+        ZMFDV(JL,JK)=PMFDUS(JL,JK)*(PVD(JL,JK)-ZIMP*PVEN(JL,IK))
       ENDIF
     ENDDO
   ENDDO
+IF (JL == 19) PRINT *, " CUDUDV ZMFUV (A) = ", ZMFUV(JL,60)
   
 ! linear fluxes below cloud
   IF(RMFSOLUV==0.0_JPRB) THEN
@@ -206,6 +217,7 @@ ENDDO
         ENDIF
       ENDDO
     ENDDO
+IF (JL == 19) PRINT *, " CUDUDV ZMFUV (B) = ", ZMFUV(JL,60)
   ENDIF
 
 !*    1.2          COMPUTE TENDENCIES
@@ -216,11 +228,24 @@ ENDDO
     IF(JK < KLEV) THEN
       IK=JK+1
       DO JL=KIDIA,KFDIA
+IF (JL == 19) THEN
+  PRINT *, " CUDUDV LDCUM = ", LDCUM (JL)
+ENDIF
         IF(LDCUM(JL)) THEN
           ZDUDT(JL,JK)=ZDP(JL,JK)*&
            & (ZMFUU(JL,IK)-ZMFUU(JL,JK)+ZMFDU(JL,IK)-ZMFDU(JL,JK))  
           ZDVDT(JL,JK)=ZDP(JL,JK)*&
            & (ZMFUV(JL,IK)-ZMFUV(JL,JK)+ZMFDV(JL,IK)-ZMFDV(JL,JK))  
+
+IF (JL == 19 .AND. IK == 60) THEN
+  PRINT *, " CUDUDV ZDVDT = ", ZDVDT(JL,JK)
+  PRINT *, " CUDUDV ZDP  = ", ZDP(JL,JK)
+  PRINT *, " CUDUDV ZMFUV = ", ZMFUV(JL,IK)
+  PRINT *, " CUDUDV ZMFUV = ", ZMFUV(JL,JK)
+  PRINT *, " CUDUDV ZMFDV = ", ZMFDV(JL,IK)
+  PRINT *, " CUDUDV ZMFDV = ", ZMFDV(JL,JK)
+ENDIF
+
         ENDIF
       ENDDO
   
@@ -235,6 +260,8 @@ ENDDO
   
   ENDDO
 
+IF (JL == 19) PRINT *, " CUDUDV ZDVDT (1) = ", ZDVDT(JL,60)
+
   IF ( RMFSOLUV==0.0_JPRB ) THEN
 
 !*    1.3          UPDATE TENDENCIES
@@ -248,6 +275,7 @@ ENDDO
         ENDIF
       ENDDO
     ENDDO
+IF (JL == 19) PRINT *, " CUDUDV PTENU (2) = ", PTENU(JL,60)
 
   ELSE
 !----------------------------------------------------------------------
@@ -273,25 +301,38 @@ ENDDO
            LLCUMBAS(JL,JK)=LDCUM(JL).AND.JK>=KCTOP(JL)-1 
            IF(LLCUMBAS(JL,JK)) THEN
              ZZP=RMFSOLUV*ZDP(JL,JK)*PTSPHY
-             ZMFUU(JL,JK)=-ZZP*(PMFU(JL,JK)+PMFD(JL,JK))
+             ZMFUU(JL,JK)=-ZZP*(PMFUUS(JL,JK)+PMFDUS(JL,JK))
              IF(JK<KLEV) THEN
-               ZB(JL,JK)=1.0_JPRB+ZZP*(PMFU(JL,IK)+PMFD(JL,IK))
+               ZB(JL,JK)=1.0_JPRB+ZZP*(PMFUUS(JL,IK)+PMFDUS(JL,IK))
              ELSE
                ZB(JL,JK)=1.0_JPRB
              ENDIF
-             ZZP=RG*(PMFUO(JL,JK)+RMFADVWDD*PMFDO(JL,JK))/(PAP(JL,JK)-PAP(JL,IM))*PTSPHY*ZADVW(JL)
+             ZZP=RG*(PMFU(JL,JK)+RMFADVWDD*PMFD(JL,JK))/(PAP(JL,JK)-PAP(JL,IM))*PTSPHY*ZADVW(JL)
              ZU=ZZP*(PUEN(JL,IM)-PUEN(JL,JK))
              ZV=ZZP*(PVEN(JL,IM)-PVEN(JL,JK))
+
+IF (JL == 19 .AND. JK == 60) THEN
+  PRINT *, " CUDUDV ZU = ", ZU
+  PRINT *, " CUDUDV ZV = ", ZV
+  PRINT *, " CUDUDV ZDVDT = ", ZDVDT(JL,JK)
+  PRINT *, " CUDUDV PTENV = ", PTENV(JL,JK)
+  PRINT *, " CUDUDV PVEN = ", PVEN(JL,JK)
+ENDIF
+
              ZDUDT(JL,JK) = (ZDUDT(JL,JK)+PTENU(JL,JK)*RMFSOLRHS)*PTSPHY+PUEN(JL,JK)-ZU
              ZDVDT(JL,JK) = (ZDVDT(JL,JK)+PTENV(JL,JK)*RMFSOLRHS)*PTSPHY+PVEN(JL,JK)-ZV
            ENDIF
          ENDDO
       ENDDO
      
+IF (JL == 19) PRINT *, " CUDUDV ZMFUU  = ", ZMFUU(JL,60)
+IF (JL == 19) PRINT *, " CUDUDV ZB  = ", ZB(JL,60)
+IF (JL == 19) PRINT *, " CUDUDV ZDVDT  = ", ZDVDT(JL,60)
       CALL CUBIDIAG&
          &( KIDIA, KFDIA, KLON, KLEV, &
          &  KCTOP, LLCUMBAS, &
          &  ZMFUU,    ZB,    ZDUDT,   ZR1 )
+IF (JL == 19) PRINT *, " ZR1 = ", ZR1(JL,60)
      
       CALL CUBIDIAG&
          &( KIDIA, KFDIA, KLON, KLEV, &
@@ -391,12 +432,23 @@ ENDDO
                PTENU(JL,JK)=PTENU(JL,JK)*(1.0_JPRB-RMFSOLRHS)+ZRDU(JL)*(ZR1(JL,JK)-PUEN(JL,JK))*ZTSPHY
                PTENV(JL,JK)=PTENV(JL,JK)*(1.0_JPRB-RMFSOLRHS)+ZRDV(JL)*(ZR2(JL,JK)-PVEN(JL,JK))*ZTSPHY
              ELSE
+
+
+IF (JL == 19 .AND. JK == 60) THEN
+  PRINT *, " PTENU = ", PTENU(JL,JK)
+  PRINT *, " RMFSOLRHS = ", RMFSOLRHS
+  PRINT *, " ZR1 = ", ZR1(JL,JK)
+  PRINT *, " PUEN  = ", PUEN(JL,JK)
+  PRINT *, " ZTSPHY = ", ZTSPHY
+ENDIF
+
                PTENU(JL,JK)=PTENU(JL,JK)*(1.0_JPRB-RMFSOLRHS)+(ZR1(JL,JK)-PUEN(JL,JK))*ZTSPHY
                PTENV(JL,JK)=PTENV(JL,JK)*(1.0_JPRB-RMFSOLRHS)+(ZR2(JL,JK)-PVEN(JL,JK))*ZTSPHY
              ENDIF
            ENDIF
          ENDDO
       ENDDO
+IF (JL == 19) PRINT *, " CUDUDV PTENU (3) = ", PTENU(JL,60)
 
 
    ENDIF
