@@ -382,7 +382,6 @@ REAL(KIND=JPHOOK) :: ZHOOK_HANDLE
 
 !---------------------------------------------------------------------
 
-IF (JL == 19) PRINT *, " CUMASTRN PTENU (1) = ", PTENU(JL,60)
 !     1.           SPECIFY CONSTANTS AND PARAMETERS
 !                  --------------------------------
 
@@ -435,7 +434,6 @@ ENDDO
 !*    2.           INITIALIZE VALUES AT VERTICAL GRID POINTS IN 'CUINI'
 !                  ---------------------------------------------------
 
-IF (JL == 19) PRINT *, " CUMASTRN PQSEN ", PQSEN(JL,78)
 CALL CUININ &
  & (YDCST,   YDTHF,    YDML_PHY_SLIN%YREPHLI,  YDML_PHY_EC%YRECUMF,&
  & KIDIA,    KFDIA,    KLON,     KLEV,&
@@ -446,7 +444,6 @@ CALL CUININ &
  & PTU,      PQU,      ZTD,      ZQD,&
  & ZUU,      ZVU,      ZUD,      ZVD,&
  & PLU     )  
-IF (JL == 19) PRINT *, " CUMASTRN PQSEN ", PQSEN(JL,78)
 
 !---------------------------------------------------------------------
 
@@ -468,8 +465,6 @@ CALL CUBASEN &
  & PTU,      PQU,      PLU,      ZKINEU,   ZWUBASE,&
  & ILAB,     LDCUM,    LDSC,     KCBOT,    KBOTSC,&
  & ICTOP0,   IDPL,     PCAPE )   
-IF (JL==19) PRINT *, " KCBOT = ", KCBOT(JL)
-IF (JL == 19) PRINT *, " CUMASTRN PQSEN ", PQSEN(JL,78)
 
 
 !*             (B) DETERMINE TOTAL MOISTURE CONVERGENCE AND
@@ -490,7 +485,6 @@ DO JL=KIDIA,KFDIA
   ZKHVFL(JL)= (-PAHFS(JL,KLEV+1) * ZORCPD - RETV * PTEN(JL,KLEV) * PQHFL(JL,KLEV+1))/(PPLRG*PPLDARE)
   ZKHFL(JL) = (-PAHFS(JL,KLEV+1) - RLVTT * PQHFL(JL,KLEV+1))/(PPLRG*PPLDARE)
 ENDDO
-IF (JL == 19) PRINT *, " CUMASTRN", PTENT (JL,60)
 DO JK=NJKT2,KLEV
 !DIR$ LOOP_INFO EST_TRIPS(16)
   DO JL=KIDIA,KFDIA
@@ -513,8 +507,6 @@ ENDDO
 !*                 SPECIFY INITIAL CLOUD TYPE
 !*
 
-IF (JL==19) PRINT *, " KCBOT = ", KCBOT(JL)
-
 !DIR$ LOOP_INFO EST_TRIPS(16)
 DO JL=KIDIA,KFDIA
   IF (LDCUM(JL)) THEN
@@ -529,19 +521,7 @@ DO JL=KIDIA,KFDIA
   ELSE
     KTYPE(JL)=0
   ENDIF
-IF (JL == 19) THEN
-  PRINT *, " LDCUM = ", LDCUM(JL)
-IF (LDCUM(JL)) THEN
-  PRINT *, " IKB = ", IKB
-  PRINT *, " ITOPM2 = ", ITOPM2
-  PRINT *, " PAPH = ", PAPH(JL,IKB), PAPH(JL,ITOPM2)
-  PRINT *, " ZPBMPT = ", ZPBMPT
-  PRINT *, " RDEPTHS = ", RDEPTHS
-ENDIF
-ENDIF
 ENDDO
-IF (JL == 19) PRINT *, " CUMASTRN KTYPE ", KTYPE (JL)
-
 
 !*             (C) calculate initial updraught mass flux
 !*                 and set lateral mixing rates
@@ -626,8 +606,6 @@ ENDDO
 !*             (B) DO ASCENT IN 'CUASC'IN ABSENCE OF DOWNDRAFTS
 !                  --------------------------------------------
 
-IF (JL == 19) PRINT *, " CUMASTRN KTYPE ", KTYPE (JL)
-IF (JL == 19) PRINT *, " CUMASTRN PQSEN ", PQSEN(JL,78)
 CALL CUASCN &
  & (YDTHF, YDCST, YDML_PHY_SLIN%YREPHLI,YDML_PHY_EC%YRECLDP,YDML_PHY_EC%YRECUMF,YDSPP_CONFIG,YGFL,&
  & KIDIA,    KFDIA,    KLON,    KLEV, LDTDKMF,&
@@ -643,7 +621,6 @@ CALL CUASCN &
  & PLCRIT_AER,&
  & ZDMFEN,&  
  & KCBOT,    KCTOP,    ICTOP0,   IDPL,     PMFUDE_RATE,   ZKINEU,   PWU,PWMEAN ) 
-IF (JL == 19) PRINT *, " CUMASTRN KTYPE ", KTYPE (JL)
 
 !*         (C) CHECK CLOUD DEPTH AND CHANGE ENTRAINMENT RATE ACCORDINGLY
 !              CALCULATE PRECIPITATION RATE (FOR DOWNDRAFT CALCULATION)
@@ -1052,7 +1029,6 @@ DO JL=KIDIA,KFDIA
     KTYPE(JL)=0
   ENDIF
 ENDDO
-IF (JL == 19) PRINT *, " CUMASTRN KTYPE ", KTYPE (JL)
 
 !                  turn off shallow convection if stratocumulus PBL type
 !DIR$ LOOP_INFO EST_TRIPS(16)
@@ -1129,7 +1105,6 @@ CALL CUFLXN &
  & ZMFUQ,    ZMFDQ,    ZMFUL,    PLUDE,    PLUDELI,   PLRAIN,  PSNDE,&
  & ZDMFUP,   ZDMFDP,   ZDPMEL,   PLGLAC,&
  & PMFLXR,   PMFLXS,   PRAIN,    PMFUDE_RATE,  PMFDDE_RATE )  
-IF (JL == 19) PRINT *, " CUMASTRN KTYPE ", KTYPE (JL)
  
 !- correct DD detrainment rates if entrainment becomes negative
 !- correct UD detrainment rates if entrainment becomes negative
@@ -1240,7 +1215,6 @@ IF( RMFSOLTQ>0.0_JPRB) THEN
   
 ENDIF
 
-IF (JL == 19) PRINT *, " CUMASTRN KTYPE ", KTYPE (JL)
 CALL CUDTDQN &
  & (YDTHF, YDCST, YDML_PHY_SLIN%YREPHLI,YDML_PHY_SLIN%YRPHNC,YDML_PHY_EC%YRECUMF,YDML_PHY_EC%YREPHY,&
  & KIDIA,    KFDIA,    KLON,     KLEV,&
@@ -1251,7 +1225,6 @@ CALL CUDTDQN &
  & ZMFUS,    ZMFDS,    ZMFUQ,    ZMFDQ,&
  & ZMFUL,    ZDMFUP,   ZDPMEL,   PMFLXR,   PMFLXS,&
  & PTENT,    PTENQ,    PENTH )
-IF (JL == 19) PRINT *, " CUMASTRN", PTENT (JL,60)
 
 !----------------------------------------------------------------------
 
@@ -1392,8 +1365,6 @@ IF(LMFDUDV) THEN
 !by
 !  &, PUEN,     PVEN,     PMFU,     PMFD
 
-IF (JL == 19) PRINT *, " CUMASTRN PTENU (2) = ", PTENU(JL,60)
-IF (JL == 19) PRINT *, " CUMASTRN PMFU = ", PMFU(JL,60)
   CALL CUDUDV &
    & (YDCST,   YDML_PHY_EC%YRECUMF, YDSPP_CONFIG, YDPERTPAR, &
    & KIDIA,    KFDIA,    KLON,     KLEV, &
@@ -1401,7 +1372,6 @@ IF (JL == 19) PRINT *, " CUMASTRN PMFU = ", PMFU(JL,60)
    & PAPH,     PAP,      PUEN,     PVEN,     ZMFUUS,   ZMFDUS,&
    & PMFU,     PMFD,     ZUU,      ZUD,      ZVU,      ZVD,    PGP2DSPP,&
    & PTENU,    PTENV     )  
-IF (JL == 19) PRINT *, " CUMASTRN PTENU (3) = ", PTENU(JL,60)
 
   IF(LMFUVDIS) THEN
 ! add KE dissipation
@@ -1410,8 +1380,6 @@ IF (JL == 19) PRINT *, " CUMASTRN PTENU (3) = ", PTENU(JL,60)
       ZSUM12(JL)=0.0_JPRB
       ZSUM22(JL)=0.0_JPRB
     ENDDO
-IF (JL == 19) PRINT *, " CUMASTRN PTENU = ", PTENU(JL,60)
-IF (JL == 19) PRINT *, " CUMASTRN PTENV = ", PTENV(JL,60)
     DO JK=1,KLEV
 !DIR$ LOOP_INFO EST_TRIPS(16)
       DO JL=KIDIA,KFDIA
@@ -1421,30 +1389,11 @@ IF (JL == 19) PRINT *, " CUMASTRN PTENV = ", PTENV(JL,60)
           ZDUTEN=PTENU(JL,JK)-ZTENU(JL,JK)
           ZDVTEN=PTENV(JL,JK)-ZTENV(JL,JK)
           ZUV2(JL,JK)=SQRT(ZDUTEN**2+ZDVTEN**2)
-
-IF (JL == 19) THEN
-  PRINT *, " JK = ", JK
-  PRINT *, " ZTENU = ", ZTENU(JL,JK)
-  PRINT *, " ZTENV = ", ZTENV(JL,JK)
-  PRINT *, " PTENU = ", PTENU(JL,JK)
-  PRINT *, " PTENV = ", PTENV(JL,JK)
-  PRINT *, " ZDUTEN  = ", ZDUTEN
-  PRINT *, " ZDVTEN  = ", ZDVTEN
-  PRINT *, " ZUV2  = ", ZUV2(JL,JK)
-  PRINT *, " ZDZ = ", ZDZ
-ENDIF
-
           ZSUM22(JL)=ZSUM22(JL)+ZUV2(JL,JK)*ZDZ
-
-IF (JL == 19) THEN
-  PRINT *, " ZSUM22 = ", ZSUM22(JL)
-ENDIF
-
           ZSUM12(JL)=ZSUM12(JL)-(PUEN(JL,JK)*ZDUTEN+PVEN(JL,JK)*ZDVTEN)*ZDZ
         ENDIF
       ENDDO
     ENDDO
-IF (JL == 19) PRINT *, " CUMASTRN ZSUM22 ",  ZSUM22(JL)
     ! Store vertically integrated dissipation rate (W m-2)
 !DIR$ LOOP_INFO EST_TRIPS(16)
     DO JL=KIDIA,KFDIA
@@ -1454,29 +1403,13 @@ IF (JL == 19) PRINT *, " CUMASTRN ZSUM22 ",  ZSUM22(JL)
     DO JK=1,KLEV
 !DIR$ LOOP_INFO EST_TRIPS(16)
       DO JL=KIDIA,KFDIA
-IF (JL == 19 .AND. JK == 60) THEN
-  PRINT *, " CUMASTRN LDCUM = ", LDCUM(JL)
-  PRINT *, " CUMASTRN KCTOP = ", KCTOP(JL)
-ENDIF
         IF (LDCUM(JL).AND.JK>=KCTOP(JL)-1) THEN
           ZTDIS=ZORCPD*ZSUM12(JL)*&
          &             ZUV2(JL,JK)/MAX(1.E-15_JPRB,ZSUM22(JL))
-
-
-IF (JL == 19 .AND. JK == 60) THEN
-  PRINT *, " CUMASTRN ZSUM22 ",  ZSUM22(JL)
-  PRINT *, " CUMASTRN ZUV2 ",  ZUV2(JL,JK)
-  PRINT *, " CUMASTRN ZSUM12 ",  ZSUM12(JL)
-  PRINT *, " CUMASTRN ZORCPD ",  ZORCPD
-  PRINT *, " CUMASTRN ZTDIS ",  ZTDIS
-  PRINT *, " CUMASTRN PTENT ",  PTENT(JL,JK)
-ENDIF
-
           PTENT(JL,JK)=PTENT(JL,JK)+ZTDIS
         ENDIF
       ENDDO
     ENDDO
-IF (JL == 19) PRINT *, " CUMASTRN 1439 ", PTENT (JL,60)
   ENDIF
 
 ENDIF
@@ -1689,9 +1622,7 @@ DO JK=1,KLEV
   ENDDO
 ENDDO
 
-IF (JL == 19) PRINT *, " CUMASTRN", PTENT (JL,60)
 !----------------------------------------------------------------------
-
 
 END ASSOCIATE
 IF (LHOOK) CALL DR_HOOK('CUMASTRN',1,ZHOOK_HANDLE)

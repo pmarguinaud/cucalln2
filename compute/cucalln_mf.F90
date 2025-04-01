@@ -334,8 +334,6 @@ DO JK=1,KLEV+1
   ENDDO
 ENDDO
 
-IF (JL == 19) PRINT *, PTENT (JL,60)
-
 !-----------------------------------------------------------------------
 
 !*    1.           UPDATE PROGN. VALUES DEPENDING ON 
@@ -389,7 +387,6 @@ IFLAG=1
 CALL SATUR (YDTHF, YDCST, KIDIA , KFDIA , KLON  , NJKT2 , KLEV,&
  & YDML_PHY_SLIN%YREPHLI%LPHYLIN, &
  & PAP   , ZTP1  , ZQSAT , IFLAG  )  
-IF (JL == 19) PRINT *, " CUMASTRN ZQSAT ", ZQSAT(JL,78)
 
 DO JL=KIDIA,KFDIA
   ZRAIN(JL)=0.0_JPRB
@@ -401,8 +398,6 @@ ENDDO
 !*           ----------------------------------------------------------- 
 
 LLTDKMF = .TRUE.
-IF (JL == 19) PRINT *, PTENT (JL,60)
-IF (JL == 19) PRINT *, " CUMASTRN ZQSAT ", ZQSAT(JL,78)
 CALL CUMASTRN &
  & (PPLDARE, PPLRG,    YDTHF,   YDCST,    YDML_PHY_SLIN,   YDML_PHY_EC,   YGFL, &
  & YDCHEM,   YDSPP_CONFIG,      YDPERTPAR, &
@@ -423,7 +418,6 @@ CALL CUMASTRN &
  & PMFU,     PMFD,     PLGLAC, &
  & PMFUDE_RATE,        PMFDDE_RATE,    PCAPE,  PWU, PWMEAN,  PVDISCU, PDISS,&
  & KTRAC,    ZCP1,     PTENC,    PSCAV, PSCAV0)  
-IF (JL == 19) PRINT *, PTENT (JL,60)
 !----------------------------------------------------------------------
 
 !*    3.0       CALL 'CUCCDIA' TO UPDATE CLOUD PARAMETERS FOR RADIATION
@@ -494,8 +488,6 @@ DO JK=1,KLEV
   ENDDO
 ENDDO
 !---------------------------------------------------------------------
-
-IF (JL == 19) PRINT *, PTENT (JL,60)
 
 END ASSOCIATE
 IF (LHOOK) CALL DR_HOOK('CUCALLN_MF',1,ZHOOK_HANDLE)

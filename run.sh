@@ -14,15 +14,16 @@ export OMP_NUM_THREADS=8
 
 cd $SLURM_SUBMIT_DIR
 
+# --case-in /scratch/work/marguina/cucalln2_d \
 ./compile.gpu_nvhpc_d_ref/main_cucalln_mf.x \
-  --case-in /scratch/work/marguina/cucalln2_d \
-  --ngpblks 10 \
+  --case-in . \
+  --ngpblks 7 \
   --verbose --diff --method openaccsinglecolumn > stdeo.ref.txt 2>&1
 
-exit
 
 ./compile.gpu_nvhpc_d/main_cucalln_mf.x \
   --case-in . \
+  --ngpblks 7 \
   --verbose --diff --method openaccsinglecolumn > stdeo.new.txt 2>&1
 
 vim -d stdeo.ref.txt stdeo.new.txt
