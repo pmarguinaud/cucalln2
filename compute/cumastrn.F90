@@ -14,7 +14,7 @@ SUBROUTINE CUMASTRN &
  & LDSHCV,&
  & PLCRIT_AER,&     
  & PTU,      PQU,      PLU,      PLUDE,    PLUDELI,   PSNDE,&
- & PENTH,    PMFLXR,   PMFLXS,   PRAIN,    PLRAIN,    PRSUD,&
+ & PENTH,    PFPLCL,   PFPLCN,   PRAIN,    PLRAIN,    PRSUD,&
  & PMFU,     PMFD,     PLGLAC, &
  & PMFUDE_RATE,        PMFDDE_RATE,    PCAPE,   PWU, PWMEAN, PVDISCU, PDISS, &
  & KTRAC,    PCEN,     PTENC,    PSCAV, PSCAV0 )  
@@ -140,8 +140,8 @@ SUBROUTINE CUMASTRN &
 !    *PLGLAC*       FROZEN CLOUD WATER/RAIN CONTENT              KG/KG
 !    *PSNDE*        DETRAINED SNOW/RAIN                           KG/(M2*S)
 !    *PENTH*        INCREMENT OF DRY STATIC ENERGY                 J/(KG*S)
-!    *PMFLXR*       CONVECTIVE RAIN FLUX                          KG/(M2*S)
-!    *PMFLXS*       CONVECTIVE SNOW FLUX                          KG/(M2*S)
+!    *PFPLCL*       CONVECTIVE RAIN FLUX                          KG/(M2*S)
+!    *PFPLCN*       CONVECTIVE SNOW FLUX                          KG/(M2*S)
 !    *PRAIN*        TOTAL PRECIP. PRODUCED IN CONV. UPDRAFTS      KG/(M2*S)
 !                   (NO EVAPORATION IN DOWNDRAFTS)
 !    *PLRAIN*       RAIN+SNOW CONTENT IN UPDRAFTS                 KG/KG
@@ -300,8 +300,8 @@ REAL(KIND=JPRB)   ,INTENT(OUT)   :: PLUDE(KLON,KLEV)
 REAL(KIND=JPRB)   ,INTENT(OUT)   :: PLUDELI(KLON,KLEV,4) 
 REAL(KIND=JPRB)   ,INTENT(OUT)   :: PSNDE(KLON,KLEV,2) 
 REAL(KIND=JPRB)   ,INTENT(OUT)   :: PENTH(KLON,KLEV) 
-REAL(KIND=JPRB)   ,INTENT(OUT)   :: PMFLXR(KLON,KLEV+1) 
-REAL(KIND=JPRB)   ,INTENT(OUT)   :: PMFLXS(KLON,KLEV+1) 
+REAL(KIND=JPRB)   ,INTENT(OUT)   :: PFPLCL(KLON,KLEV+1) 
+REAL(KIND=JPRB)   ,INTENT(OUT)   :: PFPLCN(KLON,KLEV+1) 
 REAL(KIND=JPRB)   ,INTENT(OUT)   :: PRAIN(KLON) 
 REAL(KIND=JPRB)   ,INTENT(OUT)   :: PLRAIN(KLON,KLEV) 
 REAL(KIND=JPRB)   ,INTENT(OUT)   :: PRSUD(KLON,KLEV,2) 
@@ -1104,7 +1104,7 @@ CALL CUFLXN &
  & PMFU,     PMFD,     ZMFUS,    ZMFDS,&
  & ZMFUQ,    ZMFDQ,    ZMFUL,    PLUDE,    PLUDELI,   PLRAIN,  PSNDE,&
  & ZDMFUP,   ZDMFDP,   ZDPMEL,   PLGLAC,&
- & PMFLXR,   PMFLXS,   PRAIN,    PMFUDE_RATE,  PMFDDE_RATE )  
+ & PFPLCL,   PFPLCN,   PRAIN,    PMFUDE_RATE,  PMFDDE_RATE )  
  
 !- correct DD detrainment rates if entrainment becomes negative
 !- correct UD detrainment rates if entrainment becomes negative
@@ -1125,8 +1125,8 @@ DO JK=2,KLEV-1
          PMFUDE_RATE(JL,JK)=PMFUDE_RATE(JL,JK)-ZERATE
        ENDIF
      ! ZDMFUP(JL,JK)=ZDMFUP(JL,JK)+ZDMFDP(JL,JK)
-       ZDMFUP(JL,JK)=PMFLXR(JL,JK+1)+PMFLXS(JL,JK+1)&
-                   &-PMFLXR(JL,JK)-PMFLXS(JL,JK)
+       ZDMFUP(JL,JK)=PFPLCL(JL,JK+1)+PFPLCN(JL,JK+1)&
+                   &-PFPLCL(JL,JK)-PFPLCN(JL,JK)
        ZDMFDP(JL,JK)=0.0_JPRB
     ENDIF
   ENDDO
@@ -1223,7 +1223,7 @@ CALL CUDTDQN &
  & PTEN,     ZTENH,    PQEN,     ZQENH,    PQSEN,&
  & PLGLAC,   PLUDE,    PLUDELI,  PSNDE,    PMFU,     PMFD,&
  & ZMFUS,    ZMFDS,    ZMFUQ,    ZMFDQ,&
- & ZMFUL,    ZDMFUP,   ZDPMEL,   PMFLXR,   PMFLXS,&
+ & ZMFUL,    ZDMFUP,   ZDPMEL,   PFPLCL,   PFPLCN,&
  & PTENT,    PTENQ,    PENTH )
 
 !----------------------------------------------------------------------
@@ -1480,7 +1480,7 @@ IF ( LMFTRAC .AND. KTRAC>0 ) THEN
       IF(LLDCUM(JL).AND.JK>=KCTOP(JL)-1) THEN
         ZMFUUS(JL,JK)=PMFU(JL,JK)*ZMFS(JL)
         ZMFUDR(JL,JK)=PMFUDE_RATE(JL,JK)*ZMFS(JL)
-        ZDMFUPC(JL,JK)=(PMFLXR(JL,JK)+PMFLXS(JL,JK))*ZMFS(JL)
+        ZDMFUPC(JL,JK)=(PFPLCL(JL,JK)+PFPLCN(JL,JK))*ZMFS(JL)
         IKB=KCBOT(JL)
         IF (JK>IKB) THEN
           ZDMFUPC(JL,JK)=ZDMFUPC(JL,IKB)
@@ -1593,15 +1593,15 @@ DO JK=1,KLEV
       PDISS(JL,JK)=ABS(PUEN(JL,JK)*ZDUTEN+PVEN(JL,JK)*ZDVTEN)**0.3333
 
     ! grid-mean convective rain/snow parametrization (Geer et al. 2009) with factor 0.5 for snow
-      PRSUD(JL,JK,1)=1.E-3_JPRB*ZRO*(PMFLXR(JL,JK)*3600._JPRB*ZAR)**ZBR
-      PRSUD(JL,JK,2)=0.5*1.E-3_JPRB*ZRO*(10.0_JPRB*PMFLXS(JL,JK)*3600._JPRB*ZAS)**ZBS
+      PRSUD(JL,JK,1)=1.E-3_JPRB*ZRO*(PFPLCL(JL,JK)*3600._JPRB*ZAR)**ZBR
+      PRSUD(JL,JK,2)=0.5*1.E-3_JPRB*ZRO*(10.0_JPRB*PFPLCN(JL,JK)*3600._JPRB*ZAS)**ZBS
     ! possible updraught fraction for incloud values
     ! ZFAC=PAPH(JL,NJKT5)/MIN(PAPH(JL,NJKT5),MAX(200.E2_JPRB,PAPH(JL,JK)))
     ! ZFAC=RCUCOV*ZFAC**2
     ! grid-mean convective rain/snow parametrization similar to that used in evaporation
     ! i.e. Kessler but without pressure factor and factor for snow
-    ! PRSUD(JL,JK,1)=1.E-3_JPRB*ZRO*(PMFLXR(JL,JK)*ZAK)**0.888_JPRB
-    ! PRSUD(JL,JK,2)=1.E-3_JPRB*ZRO*(PMFLXS(JL,JK)*2.5*ZAK)**0.888_JPRB
+    ! PRSUD(JL,JK,1)=1.E-3_JPRB*ZRO*(PFPLCL(JL,JK)*ZAK)**0.888_JPRB
+    ! PRSUD(JL,JK,2)=1.E-3_JPRB*ZRO*(PFPLCN(JL,JK)*2.5*ZAK)**0.888_JPRB
     ELSE
       PMFU(JL,JK)=0.0_JPRB
       PMFD(JL,JK)=0.0_JPRB
