@@ -3,7 +3,7 @@
 use strict;
 use local::lib;
 use FindBin qw ($Bin);
-use lib '/home/gmap/mrpm/marguina/fxtran-acdc/lib';
+use lib "$Bin/fxtran-acdc-ref/lib";
 use FileHandle;
 use File::Copy;
 use File::Basename;
