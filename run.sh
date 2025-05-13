@@ -14,7 +14,11 @@ export OMP_NUM_THREADS=8
 
 cd $SLURM_SUBMIT_DIR
 
-TIMES=10
+TIMES=1
+
+
+if [ 0 -eq 1 ]
+then
 
 ./compile.cpu_intel_s/main_cucalln_mf.x \
   --ngpblks 6000 --times $TIMES --out stat.txt \
@@ -25,6 +29,8 @@ TIMES=10
   --ngpblks 6000 --times $TIMES --out stat.txt \
   --case-in /scratch/work/marguina/cucalln2_s \
   --verbose --stat --method openaccsinglecolumn
+
+fi
 
 ./compile.cpu_intel_d/main_cucalln_mf.x \
   --ngpblks 6000 --times $TIMES --out stat.txt \

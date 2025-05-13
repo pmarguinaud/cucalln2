@@ -1,9 +1,6 @@
 #!/usr/bin/perl -w
 
-use strict;
 use local::lib;
-use FindBin qw ($Bin);
-use lib '/home/gmap/mrpm/marguina/fxtran-acdc/lib';
 use FileHandle;
 use File::Copy;
 use File::Basename;
@@ -11,12 +8,18 @@ use File::stat;
 use File::Path;
 use Data::Dumper;
 use Getopt::Long;
-use Bt;
-use PATH;
-use Compare;
-use OpenACC;
-use Identifier;
-use Print;
+
+use strict;
+
+use FindBin qw ($Bin);
+use lib '/home/gmap/mrpm/marguina/fxtran-acdc/canonic-layout-outline/lib';
+
+use Fxtran::Bt;
+use Fxtran::PATH;
+use Fxtran::Compare;
+use Fxtran::Pragma::OpenACC;
+use Fxtran::Identifier;
+use Fxtran::Print;
 
 
 my %opts;
@@ -49,55 +52,37 @@ sub saveToFile
       &mkpath ($d);
     }
 
-  'FileHandle'->new (">$f")->print (&Canonic::indent ($x));
+  'FileHandle'->new (">$f")->print (&Fxtran::Canonic::indent ($x));
   'FileHandle'->new (">$f.xml")->print ($x->toString ());
 }
 
-
-sub replaceJLByJLON
-{
-  my $d = shift;
-
-  my @expr = &F ('.//named-E[string(N)="JL"]/N/n/text()', $d);
-
-  for (@expr)
-    {
-      $_->setData ('JLON');
-    }
-
-  my @en_decl = &F ('.//EN-N[string(N)="JL"]/N/n/text()', $d);
-
-  for (@en_decl)
-    {
-      $_->setData ('JLON');
-    }
-}
 
 sub removeSPP
 {
   my $d = shift;
 
-  use Construct;
+  use Fxtran::Construct;
 
-  &Construct::apply ($d, '//named-E[string(.)="YDSPP_CONFIG%LSPP"]', &e ('.FALSE.'));
+  &Fxtran::Construct::apply ($d, '//named-E[string(.)="YDSPP_CONFIG%LSPP"]', &e ('.FALSE.'));
 
 }
 
 sub preProcessIfNewer
 {
-  use Inline;
-  use Associate;
+  use Fxtran::Inline;
+  use Fxtran::Associate;
   use Fxtran;
-  use Stack;
-  use Loop;
-  use ReDim;
-  use DrHook;
-  use Construct;
-  use Dimension;
-  use Call;
-  use Subroutine;
-  use Canonic;
-  use DIR;
+  use Fxtran::Stack;
+  use Fxtran::Loop;
+  use Fxtran::ReDim;
+  use Fxtran::DrHook;
+  use Fxtran::Construct;
+  use Fxtran::Dimension;
+  use Fxtran::Call;
+  use Fxtran::Subroutine;
+  use Fxtran::Canonic;
+  use Fxtran::DIR;
+  use Fxtran::Style;
 
   &copyIfNewer (@_);
 
@@ -108,6 +93,9 @@ sub preProcessIfNewer
   my $SUFFIX = '_OPENACC';
   my $suffix = lc ($SUFFIX);
 
+ 
+  my $style = 'Fxtran::Style'->new (style => 'ECPHYS');
+
   $f2 =~ s/\.F90$/$suffix.F90/;
 
   if (&newer ($f1, $f2))
@@ -116,52 +104,44 @@ sub preProcessIfNewer
 
       my $d = &Fxtran::parse (location => $f1, fopts => [qw (-construct-tag -line-length 512 -canonic -no-include)]);
      
-      &Canonic::makeCanonic ($d);
+      &Fxtran::Canonic::makeCanonic ($d);
 
       my ($pu) = &F ('./object/file/program-unit', $d);
 
       for my $in (@inlined)
         {
           my $di = &Fxtran::parse (location => $in, fopts => [qw (-construct-tag -line-length 512 -canonic -no-include)]);
-          &Canonic::makeCanonic ($di);
-          &Inline::inlineExternalSubroutine ($pu, $di);
+          &Fxtran::Canonic::makeCanonic ($di);
+          &Fxtran::Inline::inlineExternalSubroutine ($pu, $di, style => $style);
         }
 
-      &Identifier::rename ($d, JL => 'JLON', JK => 'JLEV');
-
-      &Call::addSuffix ($d, suffix => $SUFFIX, match => sub { $_[0] !~ m/^(?:DR_HOOK|ABOR1)$/o });
-      &Subroutine::addSuffix ($pu, $SUFFIX);
+      &Fxtran::Call::addSuffix ($pu, suffix => $SUFFIX, match => sub { $_[0] !~ m/^(?:DR_HOOK|ABOR1)$/o });
+      &Fxtran::Subroutine::addSuffix ($pu, $SUFFIX);
 
       &saveToFile ($d, "tmp/$f2");
 
-      &replaceJLByJLON ($d);
-
-      &DIR::removeDIR ($d);
+      &Fxtran::DIR::removeDIR ($d);
       &saveToFile ($d, "tmp/removeDIR/$f2");
 
       &removeSPP ($d);
       &saveToFile ($d, "tmp/removeSPP/$f2");
 
-      &Construct::apply ($d, '//named-E[string(.)="LMCAPEA"]', &e ('.FALSE.'));
-      &Dimension::attachArraySpecToEntity ($d);
+      &Fxtran::Construct::apply ($d, '//named-E[string(.)="LMCAPEA"]', &e ('.FALSE.'));
 
-      &Associate::resolveAssociates ($d);
-      &saveToFile ($d, "tmp/resolveAssociates/$f2");
-
-      &Loop::removeJlonLoops ($d);
+      &Fxtran::Loop::removeNpromaLoops ($pu, style => $style);
       &saveToFile ($d, "tmp/removeJlonLoops/$f2");
 
-      &ReDim::reDim ($d);
+      &Fxtran::ReDim::reDim ($d, style => $style);
       &saveToFile ($d, "tmp/reDim/$f2");
 
-      &OpenACC::routineSeq ($pu);
+      'Fxtran::Pragma::OpenACC'->insertRoutineSeq ($pu);
 
-      &Stack::addStack ($d, stack84 => 1);
+      &Fxtran::Stack::addStack ($pu, stack84 => 1, style => $style);
       &saveToFile ($d, "tmp/addStack/$f2");
 
-      &Print::useABOR1_ACC ($d);
+      &Fxtran::Print::useABOR1_ACC ($d);
 
-      &DrHook::remove ($d);
+      &Fxtran::DrHook::remove ($pu);
       &saveToFile ($d, "tmp/removeDrHook/$f2");
 
       &saveToFile ($d, $f2);
@@ -223,7 +203,7 @@ if ($opts{compile})
 
 if ($opts{compare})
   {
-    &Compare::compare ("../compare.$opts{arch}", "../compile.$opts{arch}", %opts);
+    &Fxtran::Compare::compare ("../compare.$opts{arch}", "../compile.$opts{arch}", %opts);
   }
 
 
