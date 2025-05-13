@@ -126,7 +126,7 @@ sub preProcessIfNewer
       &removeSPP ($d);
       &saveToFile ($d, "tmp/removeSPP/$f2");
 
-      &Fxtran::Construct::apply ($d, '//named-E[string(.)="LMCAPEA"]', &e ('.FALSE.'));
+if (0) {
 
       &Fxtran::Loop::removeNpromaLoops ($pu, style => $style);
       &saveToFile ($d, "tmp/removeJlonLoops/$f2");
@@ -135,6 +135,8 @@ sub preProcessIfNewer
       &saveToFile ($d, "tmp/reDim/$f2");
 
       'Fxtran::Pragma::OpenACC'->insertRoutineSeq ($pu);
+
+}
 
       &Fxtran::Stack::addStack ($pu, stack84 => 1, style => $style);
       &saveToFile ($d, "tmp/addStack/$f2");

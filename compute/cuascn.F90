@@ -226,7 +226,7 @@ REAL(KIND=JPRB) ::     ZOENTR(KLON), ZPH(KLON)
 LOGICAL ::  LLFLAG(KLON), LLFLAGUV(KLON), LLO1(KLON), LLO3
 
 INTEGER(KIND=JPIM) :: IK, IS, JK, JL, IKB
-INTEGER(KIND=JPIM) :: JLL, JLM, JLX(KLON)
+INTEGER(KIND=JPIM) :: JLL, JLM
 
 REAL(KIND=JPRB) :: Z_CLDMAX, Z_CPRC2, Z_CWDRAG, Z_CWIFRAC, ZALFAW,&
  & ZBC, ZBE, ZBUOC, ZC, ZCBF, ZCONS2, ZD, ZDFI, &
@@ -439,7 +439,6 @@ DO JK=KLEV-1,3,-1
        & (KTYPE(JL) == 3 .AND. KLAB(JL,JK+1) == 1)) THEN  
       LLFLAG(JL)=.TRUE.
       JLM=JLM+1
-      JLX(JLM)=JL
     ENDIF
     IF(KLAB(JL,JK+1) > 0) THEN
       LLFLAGUV(JL)=.TRUE.
@@ -480,8 +479,8 @@ DO JK=KLEV-1,3,-1
     DO JL=KIDIA,KFDIA
       ZQOLD(JL)=0.0_JPRB
     ENDDO
-    DO JLL=1,JLM  
-        JL=JLX(JLL)
+    DO JL=KIDIA,KFDIA
+      IF (LLFLAG(JL)) THEN
         ZDMFDE(JL)=MIN(ZDMFDE(JL),0.75_JPRB*PMFU(JL,JK+1))
         IF(JK==KCBOT(JL)) THEN
           IF (YDSPP_CONFIG%LSPP .AND. LLPERT_ENTRORG) THEN
@@ -543,6 +542,7 @@ DO JK=KLEV-1,3,-1
         ZQOLD(JL)=PQU(JL,JK)
         PLRAIN(JL,JK)=PLRAIN(JL,JK+1)*MAX(0.0_JPRB,PMFU(JL,JK+1)-ZDMFDE(JL))*ZFAC
         ZLUOLD(JL)=PLU(JL,JK)
+      ENDIF
     ENDDO
         ! reset to environmental values if below departure level
     DO JL=KIDIA,KFDIA
@@ -576,17 +576,18 @@ DO JK=KLEV-1,3,-1
 !DIR$ IVDEP
 !NEC$ IVDEP
 !OCL NOVREC
-      DO JLL=1,JLM  
-        JL=JLX(JLL)
-        IF(PQU(JL,JK) /= ZQOLD(JL)) THEN
-          ZOEALFA   = MIN(1.0_JPRB,0.545_JPRB*(TANH(0.17_JPRB*(PTU(JL,JK  )-RLPTRC))+1.0_JPRB))
-          ZOEALFAP  = MIN(1.0_JPRB,0.545_JPRB*(TANH(0.17_JPRB*(PTU(JL,JK+1)-RLPTRC))+1.0_JPRB))
-          PLGLAC(JL,JK)=PLU(JL,JK)*((1.0_JPRB-ZOEALFA)-(1.0_JPRB-ZOEALFAP))
-          ! add glaciation of rain
-          ZFAC      = 0.545_JPRB*(TANH(0.17_JPRB*(PTEN(JL,JK  )-RLPTRC))+1.0_JPRB)
-          PLGLAC(JL,JK)=PLGLAC(JL,JK)+ZFAC*PDMFUP(JL,JK+1)/MAX(RMFCMIN,PMFU(JL,JK+1))*&
-                       &(0.5_JPRB+SIGN(0.5_JPRB,RTT-PTEN(JL,JK)))*ZGLAC
-          PTU(JL,JK)=PTU(JL,JK)+RALFDCP*PLGLAC(JL,JK)
+      DO JL=KIDIA,KFDIA
+        IF (LLFLAG(JL)) THEN
+          IF(PQU(JL,JK) /= ZQOLD(JL)) THEN
+            ZOEALFA   = MIN(1.0_JPRB,0.545_JPRB*(TANH(0.17_JPRB*(PTU(JL,JK  )-RLPTRC))+1.0_JPRB))
+            ZOEALFAP  = MIN(1.0_JPRB,0.545_JPRB*(TANH(0.17_JPRB*(PTU(JL,JK+1)-RLPTRC))+1.0_JPRB))
+            PLGLAC(JL,JK)=PLU(JL,JK)*((1.0_JPRB-ZOEALFA)-(1.0_JPRB-ZOEALFAP))
+            ! add glaciation of rain
+            ZFAC      = 0.545_JPRB*(TANH(0.17_JPRB*(PTEN(JL,JK  )-RLPTRC))+1.0_JPRB)
+            PLGLAC(JL,JK)=PLGLAC(JL,JK)+ZFAC*PDMFUP(JL,JK+1)/MAX(RMFCMIN,PMFU(JL,JK+1))*&
+                         &(0.5_JPRB+SIGN(0.5_JPRB,RTT-PTEN(JL,JK)))*ZGLAC
+            PTU(JL,JK)=PTU(JL,JK)+RALFDCP*PLGLAC(JL,JK)
+          ENDIF
         ENDIF
       ENDDO
 
@@ -595,24 +596,25 @@ DO JK=KLEV-1,3,-1
 !DIR$ IVDEP
 !NEC$ IVDEP
 !OCL NOVREC
-      DO JLL=1,JLM  
-        JL=JLX(JLL)
-        IF(PQU(JL,JK) /= ZQOLD(JL)) THEN
-          PLGLAC(JL,JK)=PLU(JL,JK)*((1.0_JPRB-FOEALFCU(PTU(JL,JK)))-&
-           & (1.0_JPRB-FOEALFCU(PTU(JL,JK+1))))  
-          IF(LSCVFLAG(JL)) PLGLAC(JL,JK)=0.0_JPRB
-          ! add glaciation of rain, only fraction added to updraught heat
-           ZFAC=FOEALFCU(PTEN(JL,JK))
-           PLGLAC(JL,JK)=PLGLAC(JL,JK)+ZFAC*PDMFUP(JL,JK+1)/MAX(RMFCMIN,PMFU(JL,JK+1))*&
-                       &(0.5_JPRB+SIGN(0.5_JPRB,RTT-PTEN(JL,JK)))*ZGLAC
-          PTU(JL,JK)=PTU(JL,JK)+RALFDCP*PLGLAC(JL,JK)
+      DO JL=KIDIA,KFDIA
+        IF (LLFLAG(JL)) THEN
+          IF(PQU(JL,JK) /= ZQOLD(JL)) THEN
+            PLGLAC(JL,JK)=PLU(JL,JK)*((1.0_JPRB-FOEALFCU(PTU(JL,JK)))-&
+             & (1.0_JPRB-FOEALFCU(PTU(JL,JK+1))))  
+            IF(LSCVFLAG(JL)) PLGLAC(JL,JK)=0.0_JPRB
+            ! add glaciation of rain, only fraction added to updraught heat
+             ZFAC=FOEALFCU(PTEN(JL,JK))
+             PLGLAC(JL,JK)=PLGLAC(JL,JK)+ZFAC*PDMFUP(JL,JK+1)/MAX(RMFCMIN,PMFU(JL,JK+1))*&
+                         &(0.5_JPRB+SIGN(0.5_JPRB,RTT-PTEN(JL,JK)))*ZGLAC
+            PTU(JL,JK)=PTU(JL,JK)+RALFDCP*PLGLAC(JL,JK)
+          ENDIF
         ENDIF
       ENDDO
 
     ENDIF
 
-    DO JLL=1,JLM  
-      JL=JLX(JLL)
+    DO JL=KIDIA,KFDIA
+      IF (LLFLAG(JL)) THEN
       IF(PQU(JL,JK) /= ZQOLD(JL)) THEN
         KLAB(JL,JK)=2
         PLU(JL,JK)=PLU(JL,JK)+ZQOLD(JL)-PQU(JL,JK)
@@ -726,6 +728,7 @@ DO JK=KLEV-1,3,-1
         PMFUDE_RATE(JL,JK)=ZDMFDE(JL)
 
       ENDIF
+      ENDIF
     ENDDO
 
 !              CALCULATE PRECIPITATION RATE BY
@@ -836,15 +839,16 @@ DO JK=KLEV-1,3,-1
 
     ENDIF
 
-    DO JLL=1,JLM  
-      JL=JLX(JLL)
-      PMFUL(JL,JK)=PLU(JL,JK)*PMFU(JL,JK)
-      PMFUS(JL,JK)=(RCPD*PTU(JL,JK)+PGEOH(JL,JK))*PMFU(JL,JK)
-      PMFUQ(JL,JK)=PQU(JL,JK)*PMFU(JL,JK)
-      ZALFAW=FOEALFCU(PTU(JL,JK))
-      IF(LSCVFLAG(JL)) ZALFAW=1.0_JPRB
-      PLUDELI(JL,JK,1)=ZALFAW*PLUDE(JL,JK)
-      PLUDELI(JL,JK,2)=(1.0_JPRB-ZALFAW)*PLUDE(JL,JK)
+    DO JL=KIDIA,KFDIA
+      IF (LLFLAG(JL)) THEN
+        PMFUL(JL,JK)=PLU(JL,JK)*PMFU(JL,JK)
+        PMFUS(JL,JK)=(RCPD*PTU(JL,JK)+PGEOH(JL,JK))*PMFU(JL,JK)
+        PMFUQ(JL,JK)=PQU(JL,JK)*PMFU(JL,JK)
+        ZALFAW=FOEALFCU(PTU(JL,JK))
+        IF(LSCVFLAG(JL)) ZALFAW=1.0_JPRB
+        PLUDELI(JL,JK,1)=ZALFAW*PLUDE(JL,JK)
+        PLUDELI(JL,JK,2)=(1.0_JPRB-ZALFAW)*PLUDE(JL,JK)
+      ENDIF
     ENDDO
 
   ENDIF
