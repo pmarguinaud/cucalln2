@@ -226,7 +226,7 @@ REAL(KIND=JPRB) ::     ZOENTR(KLON), ZPH(KLON)
 LOGICAL ::  LLFLAG(KLON), LLFLAGUV(KLON), LLO1(KLON), LLO3
 
 INTEGER(KIND=JPIM) :: IK, IS, JK, JL, IKB
-INTEGER(KIND=JPIM) :: JLL, JLM
+INTEGER(KIND=JPIM) :: JLL
 
 REAL(KIND=JPRB) :: Z_CLDMAX, Z_CPRC2, Z_CWDRAG, Z_CWIFRAC, ZALFAW,&
  & ZBC, ZBE, ZBUOC, ZC, ZCBF, ZCONS2, ZD, ZDFI, &
@@ -426,7 +426,6 @@ DO JK=KLEV-1,3,-1
    & PMFUS,    PMFUQ,    PMFUL,    PDMFUP)  
 
   IS=0
-  JLM=0
   DO JL=KIDIA,KFDIA
  ! also liquid only for ktype=3
   ! IF(KTYPE(JL)>1.AND.LSCVLIQ) LSCVFLAG(JL)=.TRUE.
@@ -438,7 +437,6 @@ DO JK=KLEV-1,3,-1
     IF((LDCUM(JL).AND.KLAB(JL,JK+1) == 2).OR.&
        & (KTYPE(JL) == 3 .AND. KLAB(JL,JK+1) == 1)) THEN  
       LLFLAG(JL)=.TRUE.
-      JLM=JLM+1
     ENDIF
     IF(KLAB(JL,JK+1) > 0) THEN
       LLFLAGUV(JL)=.TRUE.
@@ -559,16 +557,14 @@ DO JK=KLEV-1,3,-1
 !                  -----------------------------------
 
     IK=JK
-    IF(JLM > 0) THEN
-      IF (LSCVLIQ) THEN
+    IF (LSCVLIQ) THEN
       CALL CUADJTQ &
        & ( YDTHF, YDCST, YDEPHLI, KIDIA,    KFDIA,    KLON,     KLEV,    IK,&
        &   ZPH,      PTU,      PQU,      LLFLAG,  6,  LSCVFLAG )  
-      ELSE
+    ELSE
       CALL CUADJTQ &
        & ( YDTHF, YDCST, YDEPHLI, KIDIA,    KFDIA,    KLON,     KLEV,    IK,&
        &   ZPH,      PTU,      PQU,      LLFLAG,  1,  LSCVFLAG )  
-      ENDIF
     ENDIF
 
     IF (LPHYLIN) THEN
