@@ -26,6 +26,8 @@
 !     2018-09      M. Michou       Add key to ARPEGE-Climat 6.3 chemistry scheme  
 MODULE YOMCHEM
 
+!$ACDC methods
+
 USE PARKIND1  ,ONLY : JPIM, JPRB
 
 IMPLICIT NONE

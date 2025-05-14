@@ -1,5 +1,7 @@
 MODULE YOM_YGFL
 
+!$ACDC methods --skip-components TYPE_GFL_COMP%PREVIOUS
+
 USE PARKIND1 , ONLY : JPIM, JPRB
 USE YOE_AERODIAG, ONLY : NPAERAOT, NPAERLISI_VAR, NPAERLISI_WVL, NPAERLISI, &
   & TYPE_AERO_WVL_DIAG, NPAERO_WVL_DIAG
@@ -14,8 +16,6 @@ SAVE
 !-------------------------------------------------------------------------
 
 TYPE TYPE_GFL_COMP ! Individual field descriptor
-
-SEQUENCE ! daand: necessary to avoid memory corruption with gfortran 4.3.3
 
 CHARACTER(LEN=16)  :: CNAME     = ''        ! ARPEGE field name 
 INTEGER(KIND=JPIM) :: IGRBCODE  = -999      ! GRIB code
@@ -110,8 +110,6 @@ END TYPE TYPE_GFL_COMP
 
 TYPE TYPE_GFL_NAML ! Individual field descriptor for namelist input
 
-SEQUENCE ! daand: necessary to avoid memory corruption with gfortran 4.3.3
-
 CHARACTER(LEN=16)  :: CNAME     ! ARPEGE field name 
 INTEGER(KIND=JPIM) :: IGRBCODE  ! GRIB code
 INTEGER(KIND=JPIM) :: NREQIN    ! 1 if field required in input, 0 if not, -1 if initialised
@@ -197,8 +195,6 @@ END TYPE TYPE_GFL_NAML
 ! 11-Sep-2020 F. Vana  - SLAVEPP in TL/AD
 
 TYPE TYPE_GFLD
-
-SEQUENCE ! daand: necessary to avoid memory corruption with gfortran 4.3.3
 
 ! Overall descriptor,dimensioning etc.
 INTEGER(KIND=JPIM) :: NUMFLDS     = 0  ! Number of GFL fields

@@ -1,4 +1,7 @@
 module spp_def_mod
+
+!$ACDC methods
+
   use parkind1, only: jpim, jprb
   use spp_gen_mod
 

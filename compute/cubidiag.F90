@@ -3,6 +3,8 @@ SUBROUTINE CUBIDIAG &
  & KCTOP, LD_LCUMASK,&
  & PA,    PB,   PR,   PU )  
 
+!$ACDC singlecolumn
+
 !          P. Bechtold         E.C.M.W.F.     07/03
 
 !          PURPOSE.

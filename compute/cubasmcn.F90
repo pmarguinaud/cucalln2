@@ -7,6 +7,8 @@ SUBROUTINE CUBASMCN &
  & PTU,      PQU,      PLU,&
  & PMFUS,    PMFUQ,    PMFUL,    PDMFUP )  
 
+!$ACDC singlecolumn
+
 !          M.TIEDTKE         E.C.M.W.F.     12/89
 
 !          PURPOSE.

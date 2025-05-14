@@ -1,5 +1,7 @@
 MODULE YOE_CUCONVCA
 
+!$ACDC methods --skip-components TECUCONVCA%YD_RANDOM_STREAM_CA
+
 ! Modified : 
 !    R. El Khatib 09-Mar-2012 Allocate RCUCONVCA/RNLCONVCA for safe bound checkings later
 !    L. Bengtsson 05-Aug-2014 Correction if using with GOL

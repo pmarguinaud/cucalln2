@@ -11,6 +11,8 @@ SUBROUTINE CUADJTQ &
  & (YDTHF, YDCST, YDEPHLI,KIDIA,    KFDIA,    KLON,    KLEV,     KK,&
  &  PSP,      PT,       PQ,      LDFLAG,   KCALL,   LDOFLAG)  
 
+!$ACDC singlecolumn
+
 !          PURPOSE.
 !          --------
 !          TO PRODUCE T,Q AND L VALUES FOR CLOUD ASCENT

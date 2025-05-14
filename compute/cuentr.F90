@@ -6,6 +6,8 @@ SUBROUTINE CUENTR &
  & PQSEN,     PAPH,     PGEOH,&
  & PMFU,      PGP2DSPP, PDMFEN,   PDMFDE )
 
+!$ACDC singlecolumn
+
 !          M.TIEDTKE         E.C.M.W.F.     12/89
 !          P.BECHTOLD        E.C.M.W.F.     06/07
 !          P.BECHTOLD        E.C.M.W.F.     03/12

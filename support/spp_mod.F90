@@ -1,5 +1,7 @@
 MODULE SPP_MOD
 
+!$ACDC methods
+
 ! Purpose :
 ! -------
 !    Define types for the SPP scheme, which represents model uncertainties

@@ -8,6 +8,8 @@ SUBROUTINE CUININ &
  & PUU,      PVU,      PUD,      PVD,&
  & PLU  )  
 
+!$ACDC singlecolumn
+
 !          PURPOSE
 !          -------
 

@@ -3,6 +3,8 @@ SUBROUTINE CUADJTQS &
  & KK,&
  & PSP,      PT,       PQ,       LDFLAG,   KCALL)  
 
+!$ACDC singlecolumn
+
 !**   *CUADJTQS* - SIMPLIFIED VERSION OF MOIST ADJUSTMENT
 
 !     PURPOSE.

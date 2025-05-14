@@ -9,6 +9,8 @@
 
 MODULE YOEPHY
 
+!$ACDC methods --skip-components TEPHY%YSURF
+
 USE PARKIND1, ONLY : JPRB, JPIM
 USE ISO_C_BINDING
 

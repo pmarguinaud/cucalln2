@@ -1,5 +1,7 @@
 module spp_gen_mod
 
+!$ACDC methods
+
 USE PARKIND1 , ONLY : JPIM, JPRB
 
 implicit none
