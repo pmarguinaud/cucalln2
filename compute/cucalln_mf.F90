@@ -22,7 +22,7 @@ SUBROUTINE CUCALLN_MF &
  & PMFUDE_RATE ,       PMFDDE_RATE ,      PCAPE  ,PWU, PWMEAN,  PVDISCU, PDISS,&
  & KTRAC,    PCM1,     PTENC,    PSCAV, PSCAV0 )  
 
-!$ACDC singlecolumn
+!$ACDC pointerparallel --ydcpg_opts
 
 !          *CUCALL* - MASTER ROUTINE - PROVIDES INTERFACE FOR:
 !                     *CUMASTR* (CUMULUS PARAMETERIZATION)
@@ -317,6 +317,8 @@ ASSOCIATE(NJKT2=>YDML_PHY_EC%YRECUMF%NJKT2, &
  & RVTMP2=>YDTHF%RVTMP2, &
  & LENCLD2=>YDML_PHY_SLIN%YRPHNC%LENCLD2)
 
+!$ACDC PARALLEL {
+
 ! Setup of tendencies
 DO JK=1,KLEV
   DO JL=KIDIA,KFDIA
@@ -336,6 +338,8 @@ DO JK=1,KLEV+1
   ENDDO
 ENDDO
 
+!$ACDC }
+
 !-----------------------------------------------------------------------
 
 !*    1.           UPDATE PROGN. VALUES DEPENDING ON 
@@ -348,6 +352,9 @@ ENDDO
 ! double precision purpose.
 !-------------------------------------------------
 ZEPS=1.0E-10_JPRB
+
+!$ACDC PARALLEL {
+
 DO JK=1,KLEV
   DO JL=KIDIA,KFDIA
     ZUP1(JL,JK)=PUM1(JL,JK)+PTENU(JL,JK)*PTSPHY
@@ -385,7 +392,12 @@ ELSE
   ENDIF
 ENDIF
 
+!$ACDC }
+
 IFLAG=1
+
+!$ACDC PARALLEL {
+
 CALL SATUR (YDTHF, YDCST, KIDIA , KFDIA , KLON  , NJKT2 , KLEV,&
  & YDML_PHY_SLIN%YREPHLI%LPHYLIN, &
  & PAP   , ZTP1  , ZQSAT , IFLAG  )  
@@ -394,12 +406,17 @@ DO JL=KIDIA,KFDIA
   ZRAIN(JL)=0.0_JPRB
 ENDDO
 
+!$ACDC }
+
 !-----------------------------------------------------------------------
 
 !*    2.     CALL 'CUMASTR'(MASTER-ROUTINE FOR CUMULUS PARAMETERIZATION) 
 !*           ----------------------------------------------------------- 
 
 LLTDKMF = .TRUE.
+
+!$ACDC PARALLEL {
+
 CALL CUMASTRN &
  & (PPLDARE, PPLRG,    YDTHF,   YDCST,    YDML_PHY_SLIN,   YDML_PHY_EC,   YGFL, &
  & YDCHEM,   YDSPP_CONFIG,      YDPERTPAR, &
@@ -420,10 +437,15 @@ CALL CUMASTRN &
  & PMFU,     PMFD,     PLGLAC, &
  & PMFUDE_RATE,        PMFDDE_RATE,    PCAPE,  PWU, PWMEAN,  PVDISCU, PDISS,&
  & KTRAC,    ZCP1,     PTENC,    PSCAV, PSCAV0)  
+
+!$ACDC }
+
 !----------------------------------------------------------------------
 
 !*    3.0       CALL 'CUCCDIA' TO UPDATE CLOUD PARAMETERS FOR RADIATION
 !               -------------------------------------------------------
+
+!$ACDC PARALLEL {
 
 CALL CUCCDIA &
  & (YDERAD,  YDML_PHY_SLIN%YREPHLI,  YDML_PHY_EC%YREPHY,&
@@ -432,11 +454,15 @@ CALL CUCCDIA &
  & LDCUM,    ZQU,      PLU,      PMFU,    ZRAIN,&
  & PARPRC,   KTOPC,    KBASEC                   )  
 
+!$ACDC }
+
 
 !---------------------------------------------------------------------
 
 !*    5.           FLUX COMPUTATIONS
 !                  -----------------
+
+!$ACDC PARALLEL {
 
 DO JL=KIDIA,KFDIA
   PDIFCQ(JL,1)=0.0_JPRB
@@ -489,6 +515,9 @@ DO JK=1,KLEV
     PFCQIF(JL,JK+1)=ZCONDFLN(JL)
   ENDDO
 ENDDO
+
+!$ACDC }
+
 !---------------------------------------------------------------------
 
 END ASSOCIATE

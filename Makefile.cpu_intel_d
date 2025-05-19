@@ -1,5 +1,11 @@
+FIELD_API_PREFIX=/home/gmap/mrpm/marguina/gpupack-w/pack/49t2_openacc-bench.01.INTEL2302.2d/hub/local/install/FieldAPI
+FIAT_PREFIX=/home/gmap/mrpm/marguina/gpupack-w/pack/49t2_openacc-bench.01.INTEL2302.2d/hub/local/install/Fiat
+
+LIBS=-L$(FIELD_API_PREFIX)/lib64 -lfield_api_dp -L$(FIAT_PREFIX)/lib64 -lfiat
+
 FC=/home/gmap/mrpm/marguina/fxtran-acdc/canonic-layout-outline/bin/fxtran-f90 --config fxtran.conf -- \
   /home/gmap/mrpm/marguina/gpupack/support/wrap/INTEL2302/mpif90 \
+  -I$(FIELD_API_PREFIX)/include/field_api_dp \
   -convert big_endian -assume byterecl -align array64byte,all -traceback -fpic -qopenmp -qopenmp-threadprivate compat \
   -fp-model source -qopt-report=5 -qopt-report-phase=vec -ftz -diag-disable=remark,cpu-dispatch -g -O2 -march=core-avx2 \
   -finline-functions -finline-limit=500 -Winline -qopt-prefetch=4 -fast-transcendentals -fimf-use-svml -no-fma -DARCH="'$(ARCH)'"
