@@ -80,5 +80,13 @@ if ($opts{compile})
   {
     local $ENV{ARCH} = $opts{arch};
     system ('make SRC=. -j4 main_cucalln_mf.x') and die;
+
+    for my $x (qw (OPENMP OPENMPSINGLECOLUMN OPENACCSINGLECOLUMN))
+      {
+        system ("objcopy ./main_cucalln_mf.x /dev/null --dump-section .parallelmethod.$x=/dev/stdout > ../lparallelmehod.$x.txt");
+      }
+
+    system ('cp ../lparallelmehod.OPENMP.txt ../lparallelmehod.txt');
+
   }
 
