@@ -454,8 +454,6 @@ CALL CUININ &
  & ZUU,      ZVU,      ZUD,      ZVD,&
  & PLU     )  
 
-!$ACDC }
-
 !---------------------------------------------------------------------
 
 !*    3.0          CLOUD BASE CALCULATIONS
@@ -464,9 +462,10 @@ CALL CUININ &
 !*             (A) DETERMINE CLOUD BASE VALUES IN 'CUBASE'
 !                  ---------------------------------------
 
-!$ACDC PARALLEL {
-
 ZKMFL(:)=0.0_JPRB
+
+!$ACDC }
+
 LLMIXS = LDTDKMF
 CALL CUBASEN &
  & (PPLDARE, PPLRG,    YDTHF,   YDCST,    YDML_PHY_SLIN%YREPHLI,YDML_PHY_EC%YRECLDP,YDML_PHY_EC%YRECUMF,&
@@ -478,6 +477,8 @@ CALL CUBASEN &
  & PTU,      PQU,      PLU,      ZKINEU,   ZWUBASE,&
  & ILAB,     LDCUM,    LDSC,     KCBOT,    KBOTSC,&
  & ICTOP0,   IDPL,     PCAPE )   
+
+!$ACDC PARALLEL {
 
 
 !*             (B) DETERMINE TOTAL MOISTURE CONVERGENCE AND
