@@ -317,7 +317,7 @@ ASSOCIATE(NJKT2=>YDML_PHY_EC%YRECUMF%NJKT2, &
  & RVTMP2=>YDTHF%RVTMP2, &
  & LENCLD2=>YDML_PHY_SLIN%YRPHNC%LENCLD2)
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 ! Setup of tendencies
 DO JK=1,KLEV
@@ -353,7 +353,7 @@ ENDDO
 !-------------------------------------------------
 ZEPS=1.0E-10_JPRB
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 DO JK=1,KLEV
   DO JL=KIDIA,KFDIA
@@ -396,7 +396,7 @@ ENDIF
 
 IFLAG=1
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 CALL SATUR (YDTHF, YDCST, KIDIA , KFDIA , KLON  , NJKT2 , KLEV,&
  & YDML_PHY_SLIN%YREPHLI%LPHYLIN, &
@@ -441,7 +441,7 @@ CALL CUMASTRN &
 !*    3.0       CALL 'CUCCDIA' TO UPDATE CLOUD PARAMETERS FOR RADIATION
 !               -------------------------------------------------------
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 CALL CUCCDIA &
  & (YDERAD,  YDML_PHY_SLIN%YREPHLI,  YDML_PHY_EC%YREPHY,&
@@ -458,7 +458,7 @@ CALL CUCCDIA &
 !*    5.           FLUX COMPUTATIONS
 !                  -----------------
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 DO JL=KIDIA,KFDIA
   PDIFCQ(JL,1)=0.0_JPRB
