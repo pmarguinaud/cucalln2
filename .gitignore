@@ -9,3 +9,8 @@ compile.*
 slurm-*.out
 *.db
 cucalln*.dat
+drhook.*
+lparallelmethod.*
+user-out/
+userdir/
+

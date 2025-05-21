@@ -13,6 +13,6 @@ FC=/home/gmap/mrpm/marguina/fxtran-acdc/canonic-layout-outline/bin/fxtran-f90 \
   --user-directory-out ../user-out \
   --config fxtran.conf -- \
   /home/gmap/mrpm/marguina/gpupack/support/wrap/$(GMKFILE)/mpif90 \
-  -I$(FIELD_API_PREFIX)/include/field_api_dp -I$(FIAT_PREFIX)/module/fiat \
+  -I$(FIELD_API_PREFIX)/include/field_api_dp -I$(FIAT_PREFIX)/include/fiat -I$(FIAT_PREFIX)/module/fiat -I$(FIAT_PREFIX)/module/parkind_dp \
   $(FCFLAGS) -DARCH="'$(ARCH)'"
 CC=/bin/cc
