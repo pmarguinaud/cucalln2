@@ -79,7 +79,7 @@ if ($opts{update})
 if ($opts{compile})
   {
     local $ENV{ARCH} = $opts{arch};
-    system ('make SRC=. -j4 main_cucalln_mf.x') and die;
+    system ('make -j4') and die;
 
     for my $x (qw (OPENMP OPENMPSINGLECOLUMN OPENACCSINGLECOLUMN))
       {
