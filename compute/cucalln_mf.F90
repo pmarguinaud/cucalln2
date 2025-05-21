@@ -415,8 +415,6 @@ ENDDO
 
 LLTDKMF = .TRUE.
 
-!$ACDC PARALLEL {
-
 CALL CUMASTRN &
  & (PPLDARE, PPLRG,    YDTHF,   YDCST,    YDML_PHY_SLIN,   YDML_PHY_EC,   YGFL, &
  & YDCHEM,   YDSPP_CONFIG,      YDPERTPAR, &
@@ -437,8 +435,6 @@ CALL CUMASTRN &
  & PMFU,     PMFD,     PLGLAC, &
  & PMFUDE_RATE,        PMFDDE_RATE,    PCAPE,  PWU, PWMEAN,  PVDISCU, PDISS,&
  & KTRAC,    ZCP1,     PTENC,    PSCAV, PSCAV0)  
-
-!$ACDC }
 
 !----------------------------------------------------------------------
 

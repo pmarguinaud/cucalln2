@@ -19,7 +19,7 @@ SUBROUTINE CUMASTRN &
  & PMFUDE_RATE,        PMFDDE_RATE,    PCAPE,   PWU, PWMEAN, PVDISCU, PDISS, &
  & KTRAC,    PCEN,     PTENC,    PSCAV, PSCAV0 )  
 
-!$ACDC singlecolumn
+!$ACDC pointerparallel --ydcpg_opts
 
 !**** *CUMASTR*  MASTER ROUTINE FOR CUMULUS MASSFLUX-SCHEME
 
@@ -411,7 +411,12 @@ ZCONS=1.0_JPRB/(RG*PTSPHY)
 ZORCPD=1.0_JPRB/RCPD
 ZRDOCPD=RD*ZORCPD
 ZRG=1.0_JPRB/RG
+
+!$ACDC PARALLEL {
+
 ZTAU(:)=0.0
+
+!$ACDC }
 
 ! prepare SPP PERTURBATIONS
 IF (YDSPP_CONFIG%LSPP) THEN
@@ -425,6 +430,8 @@ IF (YDSPP_CONFIG%LSPP) THEN
 ELSE
   LLPERT_RTAU  =.FALSE.
 ENDIF
+
+!$ACDC PARALLEL {
 
 !----------------------------------------------------------------------
 DO JL=KIDIA,KFDIA
@@ -447,6 +454,8 @@ CALL CUININ &
  & ZUU,      ZVU,      ZUD,      ZVD,&
  & PLU     )  
 
+!$ACDC }
+
 !---------------------------------------------------------------------
 
 !*    3.0          CLOUD BASE CALCULATIONS
@@ -454,6 +463,8 @@ CALL CUININ &
 
 !*             (A) DETERMINE CLOUD BASE VALUES IN 'CUBASE'
 !                  ---------------------------------------
+
+!$ACDC PARALLEL {
 
 ZKMFL(:)=0.0_JPRB
 LLMIXS = LDTDKMF
@@ -498,6 +509,8 @@ DO JK=NJKT2,KLEV
   ENDDO
 ENDDO
 
+!$ACDC }
+
 !*                 ESTIMATE CLOUD HEIGHT FOR ENTRAINMENT/DETRAINMENT
 !*                 CALCULATIONS IN CUASC AND INITIAL DETERMINATION OF 
 !*                 CLOUD TYPE
@@ -508,6 +521,8 @@ ENDDO
 
 !*                 SPECIFY INITIAL CLOUD TYPE
 !*
+
+!$ACDC PARALLEL {
 
 !DIR$ LOOP_INFO EST_TRIPS(16)
 DO JL=KIDIA,KFDIA
@@ -552,6 +567,7 @@ IF (LMFWSTAR) THEN
   ENDDO
 ENDIF
 
+
 !DIR$ LOOP_INFO EST_TRIPS(16)
 DO JL=KIDIA,KFDIA
   IF (LDCUM(JL)) THEN
@@ -591,6 +607,8 @@ DO JL=KIDIA,KFDIA
   ENDIF
 ENDDO
 
+!$ACDC }
+
 !-----------------------------------------------------------------------
 
 !*    4.0          DETERMINE CLOUD ASCENT FOR ENTRAINING PLUME
@@ -608,6 +626,8 @@ ENDDO
 !*             (B) DO ASCENT IN 'CUASC'IN ABSENCE OF DOWNDRAFTS
 !                  --------------------------------------------
 
+!$ACDC PARALLEL {
+
 CALL CUASCN &
  & (YDTHF, YDCST, YDML_PHY_SLIN%YREPHLI,YDML_PHY_EC%YRECLDP,YDML_PHY_EC%YRECUMF,YDSPP_CONFIG,YGFL,&
  & KIDIA,    KFDIA,    KLON,    KLEV, LDTDKMF,&
@@ -624,9 +644,13 @@ CALL CUASCN &
  & ZDMFEN,&  
  & KCBOT,    KCTOP,    ICTOP0,   IDPL,     PMFUDE_RATE,   ZKINEU,   PWU,PWMEAN ) 
 
+!$ACDC }
+
 !*         (C) CHECK CLOUD DEPTH AND CHANGE ENTRAINMENT RATE ACCORDINGLY
 !              CALCULATE PRECIPITATION RATE (FOR DOWNDRAFT CALCULATION)
 !              -----------------------------------------------------
+
+!$ACDC PARALLEL {
 
 !DIR$ IVDEP
 !OCL NOVREC
@@ -668,10 +692,14 @@ DO JK=1,KLEV
   ENDDO
 ENDDO
 
+!$ACDC }
+
 !-----------------------------------------------------------------------
 
 !*    5.0          CUMULUS DOWNDRAFT CALCULATIONS
 !                  ------------------------------
+
+!$ACDC PARALLEL {
 
 IF(LMFDD) THEN
 
@@ -704,6 +732,8 @@ IF(LMFDD) THEN
 
 ENDIF
 
+!$ACDC }
+
 !-----------------------------------------------------------------------
 
 !*    6.0          CLOSURE
@@ -716,6 +746,8 @@ ENDIF
 !                  --------------------------------------------
 
 !   DEEP CONVECTION
+
+!$ACDC PARALLEL {
 
 !DIR$ LOOP_INFO EST_TRIPS(16)
 DO JL=KIDIA,KFDIA
@@ -830,6 +862,10 @@ DO JL=KIDIA,KFDIA
   ENDIF
 ENDDO
 
+!$ACDC }
+
+!$ACDC PARALLEL {
+
 IF (LMFCUCA) THEN
 !only allow cloud base mass flux to vary by certain amount
 !DIR$ LOOP_INFO EST_TRIPS(16)
@@ -868,6 +904,10 @@ IF(LDMCAPEA) THEN
     PCAPE(JL) = RG*ZCAPE(JL)
   ENDDO
 ENDIF
+
+!$ACDC }
+
+!$ACDC PARALLEL {
 
 !  SHALLOW CONVECTION AND MID_LEVEL
 
@@ -930,6 +970,11 @@ DO JL=KIDIA,KFDIA
 
   ENDIF
 ENDDO
+
+!$ACDC }
+
+
+!$ACDC PARALLEL {
 
 ! rescale DD fluxes if deep and shallow convection
 
@@ -998,6 +1043,10 @@ IF (RMFADVW>0.0_JPRB) THEN
   ENDDO
 ENDIF
 
+!$ACDC }
+
+!$ACDC PARALLEL {
+
 DO JK=2,KLEV
 !DIR$ LOOP_INFO EST_TRIPS(16)
   DO JL=KIDIA,KFDIA
@@ -1065,10 +1114,14 @@ IF (.NOT.LMFSCV .OR. .NOT.LMFPEN) THEN
   ENDDO
 ENDIF
 
+!$ACDC }
+
 !-----------------------------------------------------------------------
 
 !*    7.0          DETERMINE FINAL CONVECTIVE FLUXES IN 'CUFLX'
 !                  ------------------------------------------
+
+!$ACDC PARALLEL {
 
 !- set DD mass fluxes to zero above cloud top
 !  (because of inconsistency with second updraught)
@@ -1111,6 +1164,10 @@ CALL CUFLXN &
 !- correct DD detrainment rates if entrainment becomes negative
 !- correct UD detrainment rates if entrainment becomes negative
 !- conservation correction for precip
+
+!$ACDC }
+
+!$ACDC PARALLEL {
 
 DO JK=2,KLEV-1
 !DIR$ LOOP_INFO EST_TRIPS(16)
@@ -1180,10 +1237,15 @@ DO JK=2,KLEV
     ENDIF
   ENDDO
 ENDDO
+
+!$ACDC }
+
 !----------------------------------------------------------------------
 
 !*    8.0          UPDATE TENDENCIES FOR T AND Q IN SUBROUTINE CUDTDQ
 !                  --------------------------------------------------
+
+!$ACDC PARALLEL {
 
 IF( RMFSOLTQ>0.0_JPRB) THEN
 ! derive draught properties for implicit
@@ -1228,10 +1290,14 @@ CALL CUDTDQN &
  & ZMFUL,    ZDMFUP,   ZDPMEL,   PMFLXR,   PMFLXS,&
  & PTENT,    PTENQ,    PENTH )
 
+!$ACDC }
+
 !----------------------------------------------------------------------
 
 !*    9.0          COMPUTE MOMENTUM IN UPDRAUGHT AND DOWNDRAUGHT
 !                  ---------------------------------------------
+
+!$ACDC PARALLEL {
 
 IF(LMFDUDV) THEN
 
@@ -1416,11 +1482,15 @@ IF(LMFDUDV) THEN
 
 ENDIF
 
+!$ACDC }
+
 !----------------------------------------------------------------------
 
 !*   10.           IN CASE THAT EITHER DEEP OR SHALLOW IS SWITCHED OFF
 !                  NEED TO SET SOME VARIABLES A POSTERIORI TO ZERO
 !                  ---------------------------------------------------
+
+!$ACDC PARALLEL {
 
 IF (.NOT.LMFSCV .OR. .NOT.LMFPEN) THEN
   DO JK=2,KLEV
@@ -1441,12 +1511,16 @@ IF (.NOT.LMFSCV .OR. .NOT.LMFPEN) THEN
   ENDDO
 ENDIF
 
+!$ACDC }
+
 !----------------------------------------------------------------------
 
 !*   11.0          CHEMICAL TRACER TRANSPORT
 !                  -------------------------
 
 IF ( LMFTRAC .AND. KTRAC>0 ) THEN
+
+!$ACDC PARALLEL {
 
 ! transport switched off for mid-level convection
 !DIR$ LOOP_INFO EST_TRIPS(16)
@@ -1555,6 +1629,8 @@ IF ( LMFTRAC .AND. KTRAC>0 ) THEN
      & PCEN,     PTENC,     PSCAV0)  
   ENDIF
 
+!$ACDC }
+
 ENDIF
 
 !----------------------------------------------------------------------
@@ -1562,6 +1638,8 @@ ENDIF
 !*   12.           PUT DETRAINMENT RATES FROM MFLX UNITS IN UNITS MFLX/M 
 !                  FOR ERA40, ESTIMATE VOLUME MEAN RAIN AND SNOW CONTENT
 !                  ---------------------------------------------------
+
+!$ACDC PARALLEL {
 
 PDISS(:,1)=0.0_JPRB
 ZAR=1.0_JPRB/20.89_JPRB
@@ -1623,6 +1701,8 @@ DO JK=1,KLEV
     ENDIF
   ENDDO
 ENDDO
+
+!$ACDC }
 
 !----------------------------------------------------------------------
 
