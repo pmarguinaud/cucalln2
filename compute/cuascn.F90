@@ -295,7 +295,7 @@ ENDIF
 
 LLO3=.FALSE.
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 DO JL=KIDIA,KFDIA
   ZLUOLD(JL)=0.0_JPRB
@@ -354,7 +354,7 @@ ENDDO
 
 !$ACDC }
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 DO JK=1,KLEV
   DO JL=KIDIA,KFDIA
@@ -420,7 +420,7 @@ ENDDO
 !                  THEN CHECK FOR BUOYANCY AND SET FLAGS ACCORDINGLY
 !                  -------------------------------------------------
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 DO JK=KLEV-1,3,-1
 
@@ -870,7 +870,7 @@ ENDDO
 !     5.           FINAL CALCULATIONS 
 !                  ------------------
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 DO JL=KIDIA,KFDIA
   IF(KCTOP(JL) == -1) LDCUM(JL)=.FALSE.
