@@ -412,7 +412,7 @@ ZORCPD=1.0_JPRB/RCPD
 ZRDOCPD=RD*ZORCPD
 ZRG=1.0_JPRB/RG
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 ZTAU(:)=0.0
 
@@ -431,7 +431,7 @@ ELSE
   LLPERT_RTAU  =.FALSE.
 ENDIF
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 !----------------------------------------------------------------------
 DO JL=KIDIA,KFDIA
@@ -478,7 +478,7 @@ CALL CUBASEN &
  & ILAB,     LDCUM,    LDSC,     KCBOT,    KBOTSC,&
  & ICTOP0,   IDPL,     PCAPE )   
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 
 !*             (B) DETERMINE TOTAL MOISTURE CONVERGENCE AND
@@ -523,7 +523,7 @@ ENDDO
 !*                 SPECIFY INITIAL CLOUD TYPE
 !*
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 !DIR$ LOOP_INFO EST_TRIPS(16)
 DO JL=KIDIA,KFDIA
@@ -647,7 +647,7 @@ CALL CUASCN &
 !              CALCULATE PRECIPITATION RATE (FOR DOWNDRAFT CALCULATION)
 !              -----------------------------------------------------
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 !DIR$ IVDEP
 !OCL NOVREC
@@ -696,7 +696,7 @@ ENDDO
 !*    5.0          CUMULUS DOWNDRAFT CALCULATIONS
 !                  ------------------------------
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 IF(LMFDD) THEN
 
@@ -744,7 +744,7 @@ ENDIF
 
 !   DEEP CONVECTION
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 !DIR$ LOOP_INFO EST_TRIPS(16)
 DO JL=KIDIA,KFDIA
@@ -861,7 +861,7 @@ ENDDO
 
 !$ACDC }
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 IF (LMFCUCA) THEN
 !only allow cloud base mass flux to vary by certain amount
@@ -904,7 +904,7 @@ ENDIF
 
 !$ACDC }
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 !  SHALLOW CONVECTION AND MID_LEVEL
 
@@ -971,7 +971,7 @@ ENDDO
 !$ACDC }
 
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 ! rescale DD fluxes if deep and shallow convection
 
@@ -1042,7 +1042,7 @@ ENDIF
 
 !$ACDC }
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 DO JK=2,KLEV
 !DIR$ LOOP_INFO EST_TRIPS(16)
@@ -1118,7 +1118,11 @@ ENDIF
 !*    7.0          DETERMINE FINAL CONVECTIVE FLUXES IN 'CUFLX'
 !                  ------------------------------------------
 
-!$ACDC PARALLEL {
+! TO GET IDENTICAL RESULTS FOR DIFFERENT NPROMA FORCE KTOPM2 TO 2
+
+ITOPM2=2
+
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 !- set DD mass fluxes to zero above cloud top
 !  (because of inconsistency with second updraught)
@@ -1164,7 +1168,7 @@ CALL CUFLXN &
 
 !$ACDC }
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 DO JK=2,KLEV-1
 !DIR$ LOOP_INFO EST_TRIPS(16)
@@ -1242,7 +1246,7 @@ ENDDO
 !*    8.0          UPDATE TENDENCIES FOR T AND Q IN SUBROUTINE CUDTDQ
 !                  --------------------------------------------------
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 IF( RMFSOLTQ>0.0_JPRB) THEN
 ! derive draught properties for implicit
@@ -1294,7 +1298,7 @@ CALL CUDTDQN &
 !*    9.0          COMPUTE MOMENTUM IN UPDRAUGHT AND DOWNDRAUGHT
 !                  ---------------------------------------------
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 IF(LMFDUDV) THEN
 
@@ -1487,7 +1491,7 @@ ENDIF
 !                  NEED TO SET SOME VARIABLES A POSTERIORI TO ZERO
 !                  ---------------------------------------------------
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 IF (.NOT.LMFSCV .OR. .NOT.LMFPEN) THEN
   DO JK=2,KLEV
@@ -1517,7 +1521,7 @@ ENDIF
 
 IF ( LMFTRAC .AND. KTRAC>0 ) THEN
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 ! transport switched off for mid-level convection
 !DIR$ LOOP_INFO EST_TRIPS(16)
@@ -1636,7 +1640,7 @@ ENDIF
 !                  FOR ERA40, ESTIMATE VOLUME MEAN RAIN AND SNOW CONTENT
 !                  ---------------------------------------------------
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 PDISS(:,1)=0.0_JPRB
 ZAR=1.0_JPRB/20.89_JPRB

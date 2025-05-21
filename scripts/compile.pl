@@ -89,7 +89,5 @@ if ($opts{compile})
         'FileHandle'->new (">../lparallelmethod.$x.txt")->print ($data);
       }
 
-    system ('cp ../lparallelmethod.OPENMP.txt ../lparallelmethod.txt');
-
   }
 
