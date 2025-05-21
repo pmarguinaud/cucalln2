@@ -16,7 +16,7 @@ SUBROUTINE CUASCN &
  & PDMFEN,&
  & KCBOT,    KCTOP,    KCTOP0,   KDPL,     PMFUDE_RATE,    PKINEU,  PWU, PWMEAN )  
 
-!$ACDC singlecolumn
+!$ACDC pointerparallel --ydcpg_opts
 
 !          THIS ROUTINE DOES THE CALCULATIONS FOR CLOUD ASCENTS
 !          FOR CUMULUS PARAMETERIZATION
@@ -294,6 +294,9 @@ ENDIF
 !                  ------------------
 
 LLO3=.FALSE.
+
+!$ACDC PARALLEL {
+
 DO JL=KIDIA,KFDIA
   ZLUOLD(JL)=0.0_JPRB
   IF(.NOT.LDCUM(JL)) THEN
@@ -349,6 +352,10 @@ DO JL=KIDIA,KFDIA
   IF(.NOT.LDCUM(JL).OR.KTYPE(JL) == 3) LLKLAB(JL)=.TRUE.
 ENDDO
 
+!$ACDC }
+
+!$ACDC PARALLEL {
+
 DO JK=1,KLEV
   DO JL=KIDIA,KFDIA
     IF (JK /= KCBOT(JL)) THEN 
@@ -403,6 +410,8 @@ DO JL=KIDIA,KFDIA
   ENDIF
 ENDDO
 
+!$ACDC }
+
 !----------------------------------------------------------------------
 
 !     4.           DO ASCENT: SUBCLOUD LAYER (KLAB=1) ,CLOUDS (KLAB=2)
@@ -410,6 +419,8 @@ ENDDO
 !                  BY ADJUSTING T,Q AND L ACCORDINGLY IN *CUADJTQ*,
 !                  THEN CHECK FOR BUOYANCY AND SET FLAGS ACCORDINGLY
 !                  -------------------------------------------------
+
+!$ACDC PARALLEL {
 
 DO JK=KLEV-1,3,-1
 
@@ -852,10 +863,14 @@ DO JK=KLEV-1,3,-1
   ENDIF
 ENDDO
 
+!$ACDC }
+
 !----------------------------------------------------------------------
 
 !     5.           FINAL CALCULATIONS 
 !                  ------------------
+
+!$ACDC PARALLEL {
 
 DO JL=KIDIA,KFDIA
   IF(KCTOP(JL) == -1) LDCUM(JL)=.FALSE.
@@ -865,6 +880,8 @@ DO JL=KIDIA,KFDIA
     PWMEAN(JL)=SQRT(2.0_JPRB*PWMEAN(JL))
   ENDIF
 ENDDO
+
+!$ACDC }
 
 END ASSOCIATE
 IF (LHOOK) CALL DR_HOOK('CUASCN',1,ZHOOK_HANDLE)
