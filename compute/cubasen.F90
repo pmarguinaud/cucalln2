@@ -239,7 +239,7 @@ ASSOCIATE(RLMIN=>YDECLDP%RLMIN, &
 ZAW    = 1.0_JPRB
 ZBW    = 1.0_JPRB
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 DO JL=KIDIA,KFDIA
   PWUBASE(JL)=0.0_JPRB
@@ -255,7 +255,7 @@ JKT2=NJKT2
 ZRG=1.0_JPRB/RG
 ZRCPD=1.0_JPRB/RCPD
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 DO JK=1,KLEV
   DO JL=KIDIA,KFDIA
@@ -306,7 +306,7 @@ ENDDO
 
 !$ACDC }
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 DO JKK=KLEV,JKT1,-1 ! Big external loop for level testing:
                     ! find first departure level that produces deepest cloud top
@@ -735,7 +735,7 @@ ENDDO ! end of big loop for search of departure level
 
 !$ACDC }
 
-!$ACDC PARALLEL {
+!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
       ! chose maximum CAPE value
 PCAPE(KIDIA:KFDIA) = ZCAPE(KIDIA:KFDIA,1)
@@ -750,3 +750,4 @@ ENDDO
 END ASSOCIATE
 IF (LHOOK) CALL DR_HOOK('CUBASEN',1,ZHOOK_HANDLE)
 END SUBROUTINE CUBASEN
+

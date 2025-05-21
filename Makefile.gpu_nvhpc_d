@@ -1,5 +1,18 @@
-FC=/home/gmap/mrpm/marguina/fxtran-acdc/canonic-layout-outline/bin/fxtran-f90 --config fxtran.conf -- \
-    /home/gmap/mrpm/marguina/gpupack/support/wrap/NVHPC2405ECTRANSGPU/mpif90 \
-    -mp -fPIC -Minfo -gopt -Mlarge_arrays -Mlist -traceback -Mnofma -Mbyteswapio -Mbackslash -Mstack_arrays \
-    -cuda -acc=gpu -O2 -gopt -gpu=cc70,cc80 -Minfo=accel,all,ccff -DARCH="'$(ARCH)'"
-CC=gcc
+GMKFILE=NVHPC2405ECTRANSGPU
+GMKOPT=1d
+FCFLAGS=-mp -fPIC -Minfo -gopt -Mlarge_arrays -Mlist -traceback -Mnofma -Mbyteswapio -Mbackslash -Mstack_arrays -cuda -acc=gpu -O2 -gopt -gpu=cc70,cc80 -Minfo=accel,all,ccff \
+
+FIELD_API_PREFIX=/home/gmap/mrpm/marguina/gpupack/pack/49t2_openacc-bench.01.$(GMKFILE).$(GMKOPT)/hub/local/install/FieldAPI
+FIAT_PREFIX=/home/gmap/mrpm/marguina/gpupack/pack/49t2_openacc-bench.01.$(GMKFILE).$(GMKOPT)/hub/local/install/Fiat
+
+LIBS=-L$(FIELD_API_PREFIX)/lib64 -lfield_api_dp -L$(FIAT_PREFIX)/lib64 -lfiat -Wl,-rpath,$(FIAT_PREFIX)/lib64
+
+
+FC=/home/gmap/mrpm/marguina/fxtran-acdc/canonic-layout-outline/bin/fxtran-f90 \
+  --user-directory-in ../user-in \
+  --user-directory-out ../user-out \
+  --config fxtran.conf -- \
+  /home/gmap/mrpm/marguina/gpupack/support/wrap/$(GMKFILE)/mpif90 \
+  -I$(FIELD_API_PREFIX)/include/field_api_dp -I$(FIAT_PREFIX)/module/fiat \
+  $(FCFLAGS) -DARCH="'$(ARCH)'"
+CC=/bin/cc

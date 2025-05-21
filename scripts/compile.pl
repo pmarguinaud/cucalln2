@@ -79,14 +79,17 @@ if ($opts{update})
 if ($opts{compile})
   {
     local $ENV{ARCH} = $opts{arch};
-    system ('make -j4') and die;
+    system ('make -j1') and die;
 
     for my $x (qw (OPENMP OPENMPSINGLECOLUMN OPENACCSINGLECOLUMN))
       {
-        system ("objcopy ./main_cucalln_mf.x /dev/null --dump-section .parallelmethod.$x=/dev/stdout > ../lparallelmehod.$x.txt");
+        system ("objcopy ./main_cucalln_mf.x /dev/null --dump-section .parallelmethod.$x=/dev/stdout > ../lparallelmethod.$x.txt");
+        my $data = do { my $fh = 'FileHandle'->new ("<../lparallelmethod.$x.txt"); local $/ = undef; <$fh> };
+        $data =~ s/\0//goms;
+        'FileHandle'->new (">../lparallelmethod.$x.txt")->print ($data);
       }
 
-    system ('cp ../lparallelmehod.OPENMP.txt ../lparallelmehod.txt');
+    system ('cp ../lparallelmethod.OPENMP.txt ../lparallelmethod.txt');
 
   }
 
