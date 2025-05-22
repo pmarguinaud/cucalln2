@@ -13,4 +13,6 @@ drhook.*
 lparallelmethod.*
 user-out/
 userdir/
-
+*.intfb.h
+Makefile
+tmp/
