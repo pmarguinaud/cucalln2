@@ -8,7 +8,7 @@ SUBROUTINE CUBASEN &
  & KLAB,     LDCUM,    LDSC,     KCBOT,    KBOTSC,&
  & KCTOP,    KDPL,     PCAPE )  
 
-!$ACDC pointerparallel --ydcpg_opts
+!$ACDC singleblock
 
 !          THIS ROUTINE CALCULATES CLOUD BASE FIELDS
 !          CLOUD BASE HEIGHT AND CLOUD TOP HEIGHT
