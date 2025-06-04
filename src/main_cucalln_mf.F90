@@ -1,6 +1,6 @@
 PROGRAM MAIN_CUCALLN_MF 
 
-#ifdef PGI
+#ifdef __PGI
 USE NVTX
 #endif
 
@@ -11,7 +11,6 @@ USE YOM_YGFL                     , ONLY : TYPE_GFLD
 USE YOMCHEM                      , ONLY : TCHEM
 USE SPP_MOD                      , ONLY : TSPP_CONFIG
 USE PARKIND1                     , ONLY : JPIM     ,JPRB
-USE YOMHOOK                      , ONLY : LHOOK,   DR_HOOK, JPHOOK
 
 USE YOMCST                       , ONLY : TCST  
 USE YOETHF                       , ONLY : TTHF 
@@ -22,7 +21,6 @@ USE YOMDATA
 USE XRD_GETOPTIONS
 USE XRD_UNIX_ENV
 
-USE YOMHOOK
 USE ABOR1_ACC_MOD
 
 #include "stack.h"
@@ -151,9 +149,9 @@ CHARACTER (LEN=*), PARAMETER :: CLARCH = ARCH
 CHARACTER (LEN=*), PARAMETER :: CLARCH = 'unkwown'
 #endif
 
-REAL (KIND=JPHOOK) :: ZHOOK_HANDLE
-
-IF (LHOOK) CALL DR_HOOK ('MAIN_CUCALLN_MF', 0, ZHOOK_HANDLE)
+#ifdef __PGI
+CALL NVTXSTARTRANGE ('MAIN_CUCALLN_MF')
+#endif
 
 CALL LINUX_BIND (0, 1)
 CALL LINUX_BIND_DUMP (0, 1)
@@ -361,7 +359,9 @@ IF (LLSAVE) THEN
   CALL SAVEOALL
 ENDIF
 
-IF (LHOOK) CALL DR_HOOK ('MAIN_CUCALLN_MF', 1, ZHOOK_HANDLE)
+#ifdef __PGI
+CALL NVTXENDRANGE ()
+#endif
 
 CONTAINS
 
