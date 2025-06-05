@@ -1,39 +1,17 @@
 #!/bin/bash
-#SBATCH -N1
-#SBATCH -p ndl
-#SBATCH --time 00:10:00
-#SBATCH --gres=gpu:4
-#SBATCH --exclusive
-#SBATCH --switches=3
 
-set -x
+export MODULEPATH=/ec/res4/hpcperm/sor/install/nvidia/hpc_sdk/modulefiles
+
+module load nvhpc/25.3
 
 ulimit -s unlimited
-export OMP_STACK_SIZE=4G
-export OMP_NUM_THREADS=8
 
-cd $SLURM_SUBMIT_DIR
+./main_cucalln_mf.x \
+  --case-in ../cucalln2_d_100 --verbose --stat \
+  --method singleblock --ngpblks 1 --nproma 10000
 
-TIMES=1
-
-
-./compile.cpu_intel_s/main_cucalln_mf.x \
-  --ngpblks 6000 --times $TIMES --out stat.txt \
-  --case-in /scratch/work/marguina/cucalln2_s \
-  --verbose --stat --method openmp
-
-./compile.gpu_nvhpc_s/main_cucalln_mf.x \
-  --ngpblks 6000 --times $TIMES --out stat.txt \
-  --case-in /scratch/work/marguina/cucalln2_s \
-  --verbose --stat --method openaccsinglecolumn
-
-./compile.cpu_intel_d/main_cucalln_mf.x \
-  --ngpblks 6000 --times $TIMES --out stat.txt \
-  --case-in /scratch/work/marguina/cucalln2_d \
-  --verbose --stat --method openmp
-
-./compile.gpu_nvhpc_d/main_cucalln_mf.x \
-  --ngpblks 6000 --times $TIMES --out stat.txt \
-  --case-in /scratch/work/marguina/cucalln2_d \
-  --verbose --stat --method openaccsinglecolumn
+nsys profile -t cuda,openacc,nvtx  \
+./main_cucalln_mf.x \
+  --case-in ../cucalln2_d_100 --verbose --times 5 \
+  --method singleblock --ngpblks 1 --nproma 10000
 
