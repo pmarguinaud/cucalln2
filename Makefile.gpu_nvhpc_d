@@ -2,11 +2,18 @@ FCFLAGS=-mp -fPIC -Minfo -gopt -Mlarge_arrays -Mlist -traceback -Mnofma -Mbytesw
 ARCH=gpu_nvhpc_d
 LIBS=-lnvhpcwrapnvtx -lnvToolsExt
 
-
 FC=fxtran-f90 \
+  --prefix fxtran-acdc \
   --user-directory-in user-in \
   --user-directory-out user-out \
   --config $(SRC)/fxtran.conf -- \
   pgf90 \
   $(FCFLAGS) -DARCH="'$(ARCH)'"
+
+
+boot: fxtran-acdc
+
+fxtran-acdc:
+	fxtran-boot --prefix fxtran-acdc -- pgf90 $(FCFLAGS) 
+
 CC=/bin/cc

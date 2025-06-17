@@ -8,7 +8,7 @@ SUBROUTINE CUININ &
  & PUU,      PVU,      PUD,      PVD,&
  & PLU  )  
 
-!$ACDC singlecolumn
+!$ACDC singlecolumn --address-of-array-slice
 
 !          PURPOSE
 !          -------

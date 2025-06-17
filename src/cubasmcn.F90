@@ -7,7 +7,7 @@ SUBROUTINE CUBASMCN &
  & PTU,      PQU,      PLU,&
  & PMFUS,    PMFUQ,    PMFUL,    PDMFUP )  
 
-!$ACDC singlecolumn
+!$ACDC singlecolumn --address-of-array-slice
 
 !          M.TIEDTKE         E.C.M.W.F.     12/89
 

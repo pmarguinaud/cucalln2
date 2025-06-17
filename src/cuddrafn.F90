@@ -8,7 +8,7 @@ SUBROUTINE CUDDRAFN &
  & PMFD,     PMFDS,    PMFDQ,    PDMFDP,&
  & PDMFDE,   PMFDDE_RATE,        PKINED )  
 
-!$ACDC singlecolumn
+!$ACDC singlecolumn --address-of-array-slice
 
 !          THIS ROUTINE CALCULATES CUMULUS DOWNDRAFT DESCENT
 

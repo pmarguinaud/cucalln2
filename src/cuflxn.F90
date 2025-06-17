@@ -11,7 +11,7 @@ SUBROUTINE CUFLXN &
  & PDMFUP,   PDMFDP,   PDPMEL,   PLGLAC,&
  & PMFLXR,   PMFLXS,   PRAIN,    PMFUDE_RATE,  PMFDDE_RATE )  
 
-!$ACDC singlecolumn
+!$ACDC singlecolumn --address-of-array-slice
 
 !          PURPOSE
 !          -------

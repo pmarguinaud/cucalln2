@@ -3,7 +3,7 @@ SUBROUTINE CUADJTQS &
  & KK,&
  & PSP,      PT,       PQ,       LDFLAG,   KCALL)  
 
-!$ACDC singlecolumn
+!$ACDC singlecolumn --address-of-array-slice
 
 !**   *CUADJTQS* - SIMPLIFIED VERSION OF MOIST ADJUSTMENT
 
