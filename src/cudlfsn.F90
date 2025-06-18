@@ -9,7 +9,7 @@ SUBROUTINE CUDLFSN &
  & PMFD,     PMFDS,    PMFDQ,    PDMFDP,&
  & KDTOP,    LDDRAF)  
 
-!$ACDC singlecolumn --address-of-array-slice
+!$ACDC singlecolumn --array-slice-to-address
 
 !          THIS ROUTINE CALCULATES LEVEL OF FREE SINKING FOR
 !          CUMULUS DOWNDRAFTS AND SPECIFIES T,Q,U AND V VALUES

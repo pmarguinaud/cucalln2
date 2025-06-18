@@ -22,7 +22,7 @@ SUBROUTINE CUCALLN_MF &
  & PMFUDE_RATE ,       PMFDDE_RATE ,      PCAPE  ,PWU, PWMEAN,  PVDISCU, PDISS,&
  & KTRAC,    PCM1,     PTENC,    PSCAV, PSCAV0 )  
 
-!$ACDC manyblocks --address-of-array-slice
+!$ACDC manyblocks --array-slice-to-address
 
 !          *CUCALL* - MASTER ROUTINE - PROVIDES INTERFACE FOR:
 !                     *CUMASTR* (CUMULUS PARAMETERIZATION)

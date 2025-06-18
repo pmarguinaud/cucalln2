@@ -9,7 +9,7 @@ SUBROUTINE CUDTDQN &
  & PMFUL,    PDMFUP,   PDPMEL,   PMFLXR,   PMFLXS,&
  & PTENT,    PTENQ,    PENTH )
 
-!$ACDC singlecolumn --address-of-array-slice
+!$ACDC singlecolumn --array-slice-to-address
 
 !**** *CUDTDQ* - UPDATES T AND Q TENDENCIES, PRECIPITATION RATES
 !                DOES GLOBAL DIAGNOSTICS

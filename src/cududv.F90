@@ -5,7 +5,7 @@ SUBROUTINE CUDUDV &
  & PMFUO,    PMFDO,    PUU,      PUD,      PVU,      PVD,  PGP2DSPP,&
  & PTENU,    PTENV  )  
 
-!$ACDC singlecolumn --address-of-array-slice
+!$ACDC singlecolumn --array-slice-to-address
 
 !**** *CUDUDV* - UPDATES U AND V TENDENCIES,
 !                DOES GLOBAL DIAGNOSTIC OF DISSIPATION
