@@ -1,4 +1,5 @@
-FCFLAGS=-mp -fPIC -Minfo -gopt -Mlarge_arrays -Mlist -traceback -Mnofma -Mbyteswapio -Mbackslash -Mstack_arrays -cuda -acc=gpu -O2 -gopt -gpu=cc70,cc80 -Minfo=accel,all,ccff 
+FCFLAGS=-mp -fPIC -Minfo -gopt -Mlarge_arrays -Mlist -traceback -Mnofma -Mbyteswapio -Mbackslash \
+  -Mstack_arrays -cuda -acc=gpu -O2 -gopt -gpu=cc70,cc80 -Minfo=accel,all,ccff 
 ARCH=gpu_nvhpc_d
 LIBS=-lnvhpcwrapnvtx -lnvToolsExt
 
@@ -14,6 +15,6 @@ FC=fxtran-f90 \
 boot: fxtran-acdc
 
 fxtran-acdc:
-	fxtran-boot --prefix fxtran-acdc -- pgf90 $(FCFLAGS) 
+	fxtran-boot --prefix fxtran-acdc --F90 "pgf90 $(FCFLAGS)" -CXX "pgc++ -acc=gpu -gpu=cc70,cc80 -cuda"
 
 CC=/bin/cc
