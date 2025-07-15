@@ -9,6 +9,7 @@ SUBROUTINE CUININ &
  & PLU  )  
 
 !$ACDC singlecolumn --array-slice-to-address
+!$ACDC bitrepro
 
 !          PURPOSE
 !          -------

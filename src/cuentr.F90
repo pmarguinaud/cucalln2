@@ -7,6 +7,7 @@ SUBROUTINE CUENTR &
  & PMFU,      PGP2DSPP, PDMFEN,   PDMFDE )
 
 !$ACDC singlecolumn --array-slice-to-address
+!$ACDC bitrepro
 
 !          M.TIEDTKE         E.C.M.W.F.     12/89
 !          P.BECHTOLD        E.C.M.W.F.     06/07

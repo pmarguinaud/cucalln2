@@ -10,6 +10,7 @@ SUBROUTINE CUDTDQN &
  & PTENT,    PTENQ,    PENTH )
 
 !$ACDC singlecolumn --array-slice-to-address
+!$ACDC bitrepro
 
 !**** *CUDTDQ* - UPDATES T AND Q TENDENCIES, PRECIPITATION RATES
 !                DOES GLOBAL DIAGNOSTICS

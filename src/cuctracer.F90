@@ -8,6 +8,7 @@ SUBROUTINE CUCTRACER &
  & PCEN,     PTENC,    PSCAV  )  
 
 !$ACDC singlecolumn --array-slice-to-address
+!$ACDC bitrepro
 
 !**** *CUCTRACER* - COMPUTE CONVECTIVE TRANSPORT OF CHEM. TRACERS
 !                   IMPORTANT: ROUTINE IS FOR POSITIVE DEFINIT QUANTITIES

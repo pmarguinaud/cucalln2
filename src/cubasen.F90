@@ -9,6 +9,7 @@ SUBROUTINE CUBASEN &
  & KCTOP,    KDPL,     PCAPE )  
 
 !$ACDC manyblocks --array-slice-to-address
+!$ACDC bitrepro
 
 !          THIS ROUTINE CALCULATES CLOUD BASE FIELDS
 !          CLOUD BASE HEIGHT AND CLOUD TOP HEIGHT

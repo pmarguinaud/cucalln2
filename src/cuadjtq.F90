@@ -12,6 +12,7 @@ SUBROUTINE CUADJTQ &
  &  PSP,      PT,       PQ,      LDFLAG,   KCALL,   LDOFLAG)  
 
 !$ACDC singlecolumn --array-slice-to-address
+!$ACDC bitrepro
 
 !          PURPOSE.
 !          --------

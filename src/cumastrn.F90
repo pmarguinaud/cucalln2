@@ -20,6 +20,7 @@ SUBROUTINE CUMASTRN &
  & KTRAC,    PCEN,     PTENC,    PSCAV, PSCAV0 )  
 
 !$ACDC manyblocks --array-slice-to-address
+!$ACDC bitrepro
 
 !**** *CUMASTR*  MASTER ROUTINE FOR CUMULUS MASSFLUX-SCHEME
 
@@ -561,7 +562,7 @@ IF (LMFWSTAR) THEN
     IF (LDCUM(JL)) THEN
       IKB=KCBOT(JL)
       ZDZ=MAX(0.0_JPRB,MIN(1.5E3_JPRB,(PGEOH(JL,IKB)-PGEOH(JL,KLEV+1))/RG))
-      ZMF_SHAL(JL)=0.07_JPRB*(RG/PTEN(JL,KLEV)*ZDZ*MAX(0.0_JPRB,ZKHVFL(JL)))**.3333
+      ZMF_SHAL(JL)=0.07_JPRB*(RG/PTEN(JL,KLEV)*ZDZ*MAX(0.0_JPRB,ZKHVFL(JL)))**.3333_JPRB
       ZMFMAX=(PAPH(JL,IKB)-PAPH(JL,IKB-1))*ZCONS2
       ZMF_SHAL(JL)=MIN(ZMF_SHAL(JL),ZMFMAX)
     ENDIF
@@ -1671,7 +1672,7 @@ DO JK=1,KLEV
       ZDUTEN=PTENU(JL,JK)-ZTENU(JL,JK)
       ZDVTEN=PTENV(JL,JK)-ZTENV(JL,JK)
     ! Dissipation used in eddy dissipation(EDR) turbulence diagnostic
-      PDISS(JL,JK)=ABS(PUEN(JL,JK)*ZDUTEN+PVEN(JL,JK)*ZDVTEN)**0.3333
+      PDISS(JL,JK)=ABS(PUEN(JL,JK)*ZDUTEN+PVEN(JL,JK)*ZDVTEN)**0.3333_JPRB
 
     ! grid-mean convective rain/snow parametrization (Geer et al. 2009) with factor 0.5 for snow
       PRSUD(JL,JK,1)=1.E-3_JPRB*ZRO*(PMFLXR(JL,JK)*3600._JPRB*ZAR)**ZBR
