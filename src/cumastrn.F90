@@ -19,7 +19,7 @@ SUBROUTINE CUMASTRN &
  & PMFUDE_RATE,        PMFDDE_RATE,    PCAPE,   PWU, PWMEAN, PVDISCU, PDISS, &
  & KTRAC,    PCEN,     PTENC,    PSCAV, PSCAV0 )  
 
-!$ACDC manyblocks --array-slice-to-address
+!$ACDC singlecolumn
 
 !**** *CUMASTR*  MASTER ROUTINE FOR CUMULUS MASSFLUX-SCHEME
 

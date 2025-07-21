@@ -16,7 +16,7 @@ SUBROUTINE CUASCN &
  & PDMFEN,&
  & KCBOT,    KCTOP,    KCTOP0,   KDPL,     PMFUDE_RATE,    PKINEU,  PWU, PWMEAN )  
 
-!$ACDC manyblocks --array-slice-to-address
+!$ACDC singlecolumn
 
 !          THIS ROUTINE DOES THE CALCULATIONS FOR CLOUD ASCENTS
 !          FOR CUMULUS PARAMETERIZATION
