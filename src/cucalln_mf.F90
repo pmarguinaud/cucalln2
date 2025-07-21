@@ -23,7 +23,6 @@ SUBROUTINE CUCALLN_MF &
  & KTRAC,    PCM1,     PTENC,    PSCAV, PSCAV0 )  
 
 !$ACDC manyblocks --array-slice-to-address
-!$ACDC bitrepro
 
 !          *CUCALL* - MASTER ROUTINE - PROVIDES INTERFACE FOR:
 !                     *CUMASTR* (CUMULUS PARAMETERIZATION)

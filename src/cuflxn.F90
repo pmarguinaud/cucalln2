@@ -12,7 +12,6 @@ SUBROUTINE CUFLXN &
  & PMFLXR,   PMFLXS,   PRAIN,    PMFUDE_RATE,  PMFDDE_RATE )  
 
 !$ACDC singlecolumn --array-slice-to-address
-!$ACDC bitrepro
 
 !          PURPOSE
 !          -------

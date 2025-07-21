@@ -4,7 +4,6 @@ SUBROUTINE CUBIDIAG &
  & PA,    PB,   PR,   PU )  
 
 !$ACDC singlecolumn
-!$ACDC bitrepro
 
 !          P. Bechtold         E.C.M.W.F.     07/03
 

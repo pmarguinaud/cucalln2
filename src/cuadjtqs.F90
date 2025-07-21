@@ -4,7 +4,6 @@ SUBROUTINE CUADJTQS &
  & PSP,      PT,       PQ,       LDFLAG,   KCALL)  
 
 !$ACDC singlecolumn --array-slice-to-address
-!$ACDC bitrepro
 
 !**   *CUADJTQS* - SIMPLIFIED VERSION OF MOIST ADJUSTMENT
 

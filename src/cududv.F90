@@ -6,7 +6,6 @@ SUBROUTINE CUDUDV &
  & PTENU,    PTENV  )  
 
 !$ACDC singlecolumn --array-slice-to-address
-!$ACDC bitrepro
 
 !**** *CUDUDV* - UPDATES U AND V TENDENCIES,
 !                DOES GLOBAL DIAGNOSTIC OF DISSIPATION

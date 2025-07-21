@@ -8,7 +8,6 @@ SUBROUTINE CUBASMCN &
  & PMFUS,    PMFUQ,    PMFUL,    PDMFUP )  
 
 !$ACDC singlecolumn --array-slice-to-address
-!$ACDC bitrepro
 
 !          M.TIEDTKE         E.C.M.W.F.     12/89
 

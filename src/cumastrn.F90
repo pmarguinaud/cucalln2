@@ -20,7 +20,6 @@ SUBROUTINE CUMASTRN &
  & KTRAC,    PCEN,     PTENC,    PSCAV, PSCAV0 )  
 
 !$ACDC manyblocks --array-slice-to-address
-!$ACDC bitrepro
 
 !**** *CUMASTR*  MASTER ROUTINE FOR CUMULUS MASSFLUX-SCHEME
 

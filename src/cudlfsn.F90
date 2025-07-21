@@ -10,7 +10,6 @@ SUBROUTINE CUDLFSN &
  & KDTOP,    LDDRAF)  
 
 !$ACDC singlecolumn --array-slice-to-address
-!$ACDC bitrepro
 
 !          THIS ROUTINE CALCULATES LEVEL OF FREE SINKING FOR
 !          CUMULUS DOWNDRAFTS AND SPECIFIES T,Q,U AND V VALUES
