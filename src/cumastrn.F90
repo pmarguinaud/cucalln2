@@ -412,11 +412,7 @@ ZORCPD=1.0_JPRB/RCPD
 ZRDOCPD=RD*ZORCPD
 ZRG=1.0_JPRB/RG
 
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
-
 ZTAU(:)=0.0
-
-!$ACDC }
 
 ! prepare SPP PERTURBATIONS
 IF (YDSPP_CONFIG%LSPP) THEN
@@ -431,7 +427,7 @@ ELSE
   LLPERT_RTAU  =.FALSE.
 ENDIF
 
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
+!$ACDC PARALLEL {
 
 !----------------------------------------------------------------------
 DO JL=KIDIA,KFDIA
@@ -478,8 +474,6 @@ CALL CUBASEN &
  & ILAB,     LDCUM,    LDSC,     KCBOT,    KBOTSC,&
  & ICTOP0,   IDPL,     PCAPE )   
 
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
-
 
 !*             (B) DETERMINE TOTAL MOISTURE CONVERGENCE AND
 !*                 DECIDE ON TYPE OF CUMULUS CONVECTION 
@@ -510,8 +504,6 @@ DO JK=NJKT2,KLEV
   ENDDO
 ENDDO
 
-!$ACDC }
-
 !*                 ESTIMATE CLOUD HEIGHT FOR ENTRAINMENT/DETRAINMENT
 !*                 CALCULATIONS IN CUASC AND INITIAL DETERMINATION OF 
 !*                 CLOUD TYPE
@@ -522,8 +514,6 @@ ENDDO
 
 !*                 SPECIFY INITIAL CLOUD TYPE
 !*
-
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 !DIR$ LOOP_INFO EST_TRIPS(16)
 DO JL=KIDIA,KFDIA
@@ -608,8 +598,6 @@ DO JL=KIDIA,KFDIA
   ENDIF
 ENDDO
 
-!$ACDC }
-
 !-----------------------------------------------------------------------
 
 !*    4.0          DETERMINE CLOUD ASCENT FOR ENTRAINING PLUME
@@ -646,8 +634,6 @@ CALL CUASCN &
 !*         (C) CHECK CLOUD DEPTH AND CHANGE ENTRAINMENT RATE ACCORDINGLY
 !              CALCULATE PRECIPITATION RATE (FOR DOWNDRAFT CALCULATION)
 !              -----------------------------------------------------
-
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 !DIR$ IVDEP
 !OCL NOVREC
@@ -689,14 +675,12 @@ DO JK=1,KLEV
   ENDDO
 ENDDO
 
-!$ACDC }
-
 !-----------------------------------------------------------------------
 
 !*    5.0          CUMULUS DOWNDRAFT CALCULATIONS
 !                  ------------------------------
 
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
+!$ACDC PARALLEL {
 
 IF(LMFDD) THEN
 
@@ -743,8 +727,6 @@ ENDIF
 !                  --------------------------------------------
 
 !   DEEP CONVECTION
-
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 !DIR$ LOOP_INFO EST_TRIPS(16)
 DO JL=KIDIA,KFDIA
@@ -859,10 +841,6 @@ DO JL=KIDIA,KFDIA
   ENDIF
 ENDDO
 
-!$ACDC }
-
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
-
 IF (LMFCUCA) THEN
 !only allow cloud base mass flux to vary by certain amount
 !DIR$ LOOP_INFO EST_TRIPS(16)
@@ -901,10 +879,6 @@ IF(LDMCAPEA) THEN
     PCAPE(JL) = RG*ZCAPE(JL)
   ENDDO
 ENDIF
-
-!$ACDC }
-
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 !  SHALLOW CONVECTION AND MID_LEVEL
 
@@ -967,11 +941,6 @@ DO JL=KIDIA,KFDIA
 
   ENDIF
 ENDDO
-
-!$ACDC }
-
-
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 ! rescale DD fluxes if deep and shallow convection
 
@@ -1040,10 +1009,6 @@ IF (RMFADVW>0.0_JPRB) THEN
   ENDDO
 ENDIF
 
-!$ACDC }
-
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
-
 DO JK=2,KLEV
 !DIR$ LOOP_INFO EST_TRIPS(16)
   DO JL=KIDIA,KFDIA
@@ -1111,8 +1076,6 @@ IF (.NOT.LMFSCV .OR. .NOT.LMFPEN) THEN
   ENDDO
 ENDIF
 
-!$ACDC }
-
 !-----------------------------------------------------------------------
 
 !*    7.0          DETERMINE FINAL CONVECTIVE FLUXES IN 'CUFLX'
@@ -1122,7 +1085,7 @@ ENDIF
 
 ITOPM2=2
 
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
+!$ACDC PARALLEL {
 
 !- set DD mass fluxes to zero above cloud top
 !  (because of inconsistency with second updraught)
@@ -1167,8 +1130,6 @@ CALL CUFLXN &
 !- conservation correction for precip
 
 !$ACDC }
-
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
 
 DO JK=2,KLEV-1
 !DIR$ LOOP_INFO EST_TRIPS(16)
@@ -1239,14 +1200,12 @@ DO JK=2,KLEV
   ENDDO
 ENDDO
 
-!$ACDC }
-
 !----------------------------------------------------------------------
 
 !*    8.0          UPDATE TENDENCIES FOR T AND Q IN SUBROUTINE CUDTDQ
 !                  --------------------------------------------------
 
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
+!$ACDC PARALLEL {
 
 IF( RMFSOLTQ>0.0_JPRB) THEN
 ! derive draught properties for implicit
@@ -1298,7 +1257,7 @@ CALL CUDTDQN &
 !*    9.0          COMPUTE MOMENTUM IN UPDRAUGHT AND DOWNDRAUGHT
 !                  ---------------------------------------------
 
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
+!$ACDC PARALLEL {
 
 IF(LMFDUDV) THEN
 
@@ -1491,8 +1450,6 @@ ENDIF
 !                  NEED TO SET SOME VARIABLES A POSTERIORI TO ZERO
 !                  ---------------------------------------------------
 
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
-
 IF (.NOT.LMFSCV .OR. .NOT.LMFPEN) THEN
   DO JK=2,KLEV
 !DIR$ LOOP_INFO EST_TRIPS(16)
@@ -1512,8 +1469,6 @@ IF (.NOT.LMFSCV .OR. .NOT.LMFPEN) THEN
   ENDDO
 ENDIF
 
-!$ACDC }
-
 !----------------------------------------------------------------------
 
 !*   11.0          CHEMICAL TRACER TRANSPORT
@@ -1521,7 +1476,7 @@ ENDIF
 
 IF ( LMFTRAC .AND. KTRAC>0 ) THEN
 
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
+!$ACDC PARALLEL {
 
 ! transport switched off for mid-level convection
 !DIR$ LOOP_INFO EST_TRIPS(16)
@@ -1640,8 +1595,6 @@ ENDIF
 !                  FOR ERA40, ESTIMATE VOLUME MEAN RAIN AND SNOW CONTENT
 !                  ---------------------------------------------------
 
-!$ACDC PARALLEL,TARGET=OpenMP/OpenACCSingleColumn {
-
 PDISS(:,1)=0.0_JPRB
 ZAR=1.0_JPRB/20.89_JPRB
 ZAS=1.0_JPRB/29.51_JPRB
@@ -1702,8 +1655,6 @@ DO JK=1,KLEV
     ENDIF
   ENDDO
 ENDDO
-
-!$ACDC }
 
 !----------------------------------------------------------------------
 
