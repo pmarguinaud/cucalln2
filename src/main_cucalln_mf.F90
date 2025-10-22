@@ -21,8 +21,6 @@ USE YOMDATA
 USE XRD_GETOPTIONS
 USE XRD_UNIX_ENV
 
-USE ABOR1_ACC_MOD
-
 #include "stack.h"
 
 USE STACK_MOD
@@ -299,10 +297,10 @@ DO ITIME = 1, NTIME
     
       DO JLON = 1, NPROMA
     
-        YLSTACK%L8 = stack_l8 (YSTACK, JBLK, NGPBLKS)
-        YLSTACK%U8 = stack_u8 (YSTACK, JBLK, NGPBLKS)
-        YLSTACK%L4 = stack_l4 (YSTACK, JBLK, NGPBLKS)
-        YLSTACK%U4 = stack_u4 (YSTACK, JBLK, NGPBLKS)
+        YLSTACK%L8 = fxtran_acdc_stack_l8 (YSTACK, JBLK, NGPBLKS)
+        YLSTACK%U8 = fxtran_acdc_stack_u8 (YSTACK, JBLK, NGPBLKS)
+        YLSTACK%L4 = fxtran_acdc_stack_l4 (YSTACK, JBLK, NGPBLKS)
+        YLSTACK%U4 = fxtran_acdc_stack_u4 (YSTACK, JBLK, NGPBLKS)
 
         CALL CUCALLN_MF_OPENACC (PPLDARE, PPLRG, KSTEP, YDTHF, YDCST, YDERAD, YDML_PHY_SLIN, YDML_PHY_EC, YGFL,         &
         & YDCHEM, YDSPP_CONFIG, YDPERTPAR, JLON, JLON, NPROMA, KSMAX, KLEV, PDX (:, JBLK), KSPPN2D,                     &
