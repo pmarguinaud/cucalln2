@@ -7,11 +7,10 @@ module load nvhpc/25.3
 ulimit -s unlimited
 
 ./main_cucalln_mf.x \
-  --case-in ../cucalln2_d_100 --verbose --stat \
-  --method singleblock --ngpblks 1 --nproma 10000
+  --case-in ../cucalln2_d_10 --verbose --stat \
+  --method openaccsinglecolumn --ngpblks 100 --nproma 32
 
-nsys profile -t cuda,openacc,nvtx  \
 ./main_cucalln_mf.x \
-  --case-in ../cucalln2_d_100 --verbose --times 5 \
-  --method singleblock --ngpblks 1 --nproma 10000
+  --case-in ../cucalln2_d_10 --verbose --stat \
+  --method openaccmanyblocks --ngpblks 100 --nproma 32
 
