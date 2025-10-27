@@ -23,7 +23,8 @@ SUBROUTINE CUCALLN_MF &
  & KTRAC,    PCM1,     PTENC,    PSCAV, PSCAV0 )  
 
 !$ACDC singlecolumn
-!$ACDC manyblocks
+!$ACDC manyblocks --suffix-singlecolumn _A2SACC --array-slice-to-address
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !          *CUCALL* - MASTER ROUTINE - PROVIDES INTERFACE FOR:
 !                     *CUMASTR* (CUMULUS PARAMETERIZATION)

@@ -9,7 +9,8 @@ SUBROUTINE CUBASEN &
  & KCTOP,    KDPL,     PCAPE )  
 
 !$ACDC singlecolumn
-!$ACDC manyblocks
+!$ACDC manyblocks --suffix-singlecolumn _A2SACC --array-slice-to-address
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !          THIS ROUTINE CALCULATES CLOUD BASE FIELDS
 !          CLOUD BASE HEIGHT AND CLOUD TOP HEIGHT

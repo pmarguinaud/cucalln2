@@ -7,6 +7,7 @@ SUBROUTINE CUENTR &
  & PMFU,      PGP2DSPP, PDMFEN,   PDMFDE )
 
 !$ACDC singlecolumn 
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !          M.TIEDTKE         E.C.M.W.F.     12/89
 !          P.BECHTOLD        E.C.M.W.F.     06/07

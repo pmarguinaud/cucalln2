@@ -9,6 +9,7 @@ SUBROUTINE CUININ &
  & PLU  )  
 
 !$ACDC singlecolumn 
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !          PURPOSE
 !          -------

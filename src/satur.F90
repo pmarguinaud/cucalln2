@@ -11,6 +11,7 @@ SUBROUTINE SATUR ( YDTHF, YDCST, KIDIA , KFDIA , KLON  , KTDIA , KLEV, LDPHYLIN,
  & PAPRSF, PT    , PQSAT , KFLAG)
 
 !$ACDC singlecolumn 
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !***
 

@@ -20,7 +20,8 @@ SUBROUTINE CUMASTRN &
  & KTRAC,    PCEN,     PTENC,    PSCAV, PSCAV0 )  
 
 !$ACDC singlecolumn
-!$ACDC manyblocks
+!$ACDC manyblocks --suffix-singlecolumn _A2SACC --array-slice-to-address
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !**** *CUMASTR*  MASTER ROUTINE FOR CUMULUS MASSFLUX-SCHEME
 

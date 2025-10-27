@@ -10,6 +10,7 @@ SUBROUTINE CUDTDQN &
  & PTENT,    PTENQ,    PENTH )
 
 !$ACDC singlecolumn 
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !**** *CUDTDQ* - UPDATES T AND Q TENDENCIES, PRECIPITATION RATES
 !                DOES GLOBAL DIAGNOSTICS

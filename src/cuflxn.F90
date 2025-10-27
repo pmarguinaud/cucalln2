@@ -12,6 +12,7 @@ SUBROUTINE CUFLXN &
  & PMFLXR,   PMFLXS,   PRAIN,    PMFUDE_RATE,  PMFDDE_RATE )  
 
 !$ACDC singlecolumn 
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !          PURPOSE
 !          -------

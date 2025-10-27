@@ -12,6 +12,7 @@ SUBROUTINE CUADJTQ &
  &  PSP,      PT,       PQ,      LDFLAG,   KCALL,   LDOFLAG)  
 
 !$ACDC singlecolumn 
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !          PURPOSE.
 !          --------

@@ -4,6 +4,7 @@ SUBROUTINE CUADJTQS &
  & PSP,      PT,       PQ,       LDFLAG,   KCALL)  
 
 !$ACDC singlecolumn 
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !**   *CUADJTQS* - SIMPLIFIED VERSION OF MOIST ADJUSTMENT
 

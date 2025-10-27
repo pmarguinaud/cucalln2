@@ -6,6 +6,7 @@ SUBROUTINE CUDUDV &
  & PTENU,    PTENV  )  
 
 !$ACDC singlecolumn 
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !**** *CUDUDV* - UPDATES U AND V TENDENCIES,
 !                DOES GLOBAL DIAGNOSTIC OF DISSIPATION

@@ -5,6 +5,7 @@ SUBROUTINE CUCCDIA &
  & PARPRC,   KTOPC,    KBASEC                   )  
 
 !$ACDC singlecolumn 
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !**** *CUCCDIA*- UPDATES PRECIPITAION, CLOUD BASE AND CLOUD TOP
 !                FOR DIAGNOSTIC SCHEME FOR CONVECTIVE CLOUDS

@@ -4,6 +4,7 @@ SUBROUTINE CUBIDIAG &
  & PA,    PB,   PR,   PU )  
 
 !$ACDC singlecolumn
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !          P. Bechtold         E.C.M.W.F.     07/03
 

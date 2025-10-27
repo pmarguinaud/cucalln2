@@ -9,6 +9,7 @@ SUBROUTINE CUDDRAFN &
  & PDMFDE,   PMFDDE_RATE,        PKINED )  
 
 !$ACDC singlecolumn 
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !          THIS ROUTINE CALCULATES CUMULUS DOWNDRAFT DESCENT
 

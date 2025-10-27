@@ -8,6 +8,7 @@ SUBROUTINE CUBASMCN &
  & PMFUS,    PMFUQ,    PMFUL,    PDMFUP )  
 
 !$ACDC singlecolumn 
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !          M.TIEDTKE         E.C.M.W.F.     12/89
 

@@ -10,6 +10,7 @@ SUBROUTINE CUDLFSN &
  & KDTOP,    LDDRAF)  
 
 !$ACDC singlecolumn 
+!$ACDC singlecolumn --suffix-singlecolumn-called _OPENACC --suffix-singlecolumn _A2SACC --array-slice-to-address
 
 !          THIS ROUTINE CALCULATES LEVEL OF FREE SINKING FOR
 !          CUMULUS DOWNDRAFTS AND SPECIFIES T,Q,U AND V VALUES
