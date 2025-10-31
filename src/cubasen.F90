@@ -187,7 +187,7 @@ LOGICAL :: LLPERT_ENTRORG, LLPERT_ENTSTPC1  ! SPP perturbation on?
 
 
 
-INTEGER(KIND=JPIM) :: IK, IS, JK, JL, JKK, JKT1, JKT2, JKT, JKB
+INTEGER(KIND=JPIM) :: IK, IS (KLON), JK, JL, JKK, JKT1, JKT2, JKT, JKB
 INTEGER(KIND=JPIM) :: IPENTRORG, IPENTSTPC1
 
 REAL(KIND=JPRB)    :: ZS(KLON,KLEV), ZSENH(KLON,KLEV+1), ZQENH(KLON,KLEV+1), ZSUH (KLON,KLEV),&
@@ -300,6 +300,8 @@ DO JK=1,KLEV
   ENDDO
 ENDDO
 
+!$ACDC PARALLEL {
+
 DO JKK=KLEV,JKT1,-1 ! Big external loop for level testing:
                     ! find first departure level that produces deepest cloud top
                     ! or take surface level for shallow convection and Sc
@@ -311,7 +313,7 @@ DO JKK=KLEV,JKT1,-1 ! Big external loop for level testing:
   IS=0
   DO JL=KIDIA,KFDIA
     IF (LLGO_ON(JL)) THEN
-      IS=IS+1
+      IS (JL)=1
       IDPL(JL)    =JKK      ! departure level
       ICBOT  (JL) =JKK      ! cloud base level for convection, (-1 if not found)
       IBOTSC (JL) =KLEV-1   ! sc    base level for sc-clouds , (-1 if not found)
@@ -322,7 +324,7 @@ DO JKK=KLEV,JKT1,-1 ! Big external loop for level testing:
     ENDIF 
   ENDDO
 
-  IF(IS /= 0) THEN
+  IF(SUM (IS (KIDIA:KFDIA)) > 0) THEN
 
     IF(JKK == KLEV) THEN
 
@@ -440,7 +442,7 @@ DO JKK=KLEV,JKT1,-1 ! Big external loop for level testing:
         ENDIF
 
         IF (LLGO_ON(JL)) THEN
-          IS         = IS+1
+          IS (JL) = 1
           ZDZ(JL)    = (PGEOH(JL,JK) - PGEOH(JL,JK+1))*ZRG
           IF (LDTDKMF) THEN
              ZEPS       = ZXENTSTPC1/((PGEOH(JL,JK)-PGEOH(JL,KLEV+1))*ZRG*PPLRG) + ENTSTPC2
@@ -479,7 +481,7 @@ DO JKK=KLEV,JKT1,-1 ! Big external loop for level testing:
 
       DO JL=KIDIA,KFDIA
         IF (LLGO_ON(JL)) THEN
-          IS         = IS+1
+          IS (JL) = 1
           ZMIX(JL)=MIN(1.0_JPRB,ZMIX(JL))
           ZQF = (PQENH(JL,JK+1) + PQENH(JL,JK))*0.5_JPRB
           ZSF = (ZSENH(JL,JK+1) + ZSENH(JL,JK))*0.5_JPRB
@@ -493,7 +495,7 @@ DO JKK=KLEV,JKT1,-1 ! Big external loop for level testing:
 
     ENDIF
 
-    IF (IS == 0) EXIT
+    IF(.NOT. (SUM (IS (KIDIA:KFDIA)) > 0)) EXIT
      
     IK=JK
      
@@ -724,6 +726,8 @@ DO JKK=KLEV,JKT1,-1 ! Big external loop for level testing:
   ENDIF
 
 ENDDO ! end of big loop for search of departure level     
+
+!$ACDC }
 
       ! chose maximum CAPE value
 PCAPE(KIDIA:KFDIA) = ZCAPE(KIDIA:KFDIA,1)

@@ -6,11 +6,13 @@ module load nvhpc/25.3
 
 ulimit -s unlimited
 
-./main_cucalln_mf.x \
-  --case-in ../cucalln2_d_10 --verbose --stat \
-  --method openaccsinglecolumn --ngpblks 100 --nproma 32
+for method in openaccsinglecolumn openaccmanyblocks
+do
 
 ./main_cucalln_mf.x \
   --case-in ../cucalln2_d_10 --verbose --stat \
-  --method openaccmanyblocks --ngpblks 100 --nproma 32
+  --method openaccsinglecolumn --ngpblks 100 --nproma 32 \
+  > $method.txt 2>&1
+
+done
 
